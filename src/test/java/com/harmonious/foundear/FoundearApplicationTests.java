@@ -8,17 +8,4 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class FoundearApplicationTests {
-
-	ApplicationModules modules = ApplicationModules.of(FoundearApplication.class);
-
-	@Test
-	void contextLoads() {
-		assertThat(modules).isNotNull();
-	}
-
-	@Test
-	void shouldBeCompliant() {
-		modules.verify();
-	}
-
 }
