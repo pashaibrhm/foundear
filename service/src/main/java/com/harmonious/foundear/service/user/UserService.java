@@ -1,7 +1,6 @@
 package com.harmonious.foundear.service.user;
 
 import com.harmonious.foundear.dto.user.UserDto;
-import com.harmonious.foundear.entity.user.User;
 
 import java.util.List;
 import java.util.Optional;

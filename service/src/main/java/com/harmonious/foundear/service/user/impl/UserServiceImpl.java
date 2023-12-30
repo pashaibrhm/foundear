@@ -73,26 +73,9 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * @param userDto Dto object to be copied into the entity object without the id
-     * @return User entity object that has copied the properties from the dto object
+     * @param user User to be copied from dto object properties
+     * @param userDto User DTO object that used for copying into user entity object
      */
-    private User copyPropertiesFromDto(UserDto userDto) {
-        User user = new User();
-
-        user.setUserName(userDto.getUserName());
-        user.setUserEmail(userDto.getUserEmail());
-        user.setUserPassword(userDto.getUserPassword());
-        user.setCreatedAt(userDto.getCreatedAt());
-        user.setCreatedBy(userDto.getCreatedBy());
-        user.setUpdatedAt(userDto.getUpdatedAt());
-        user.setUpdatedBy(userDto.getUpdatedBy());
-        user.setApprovedAt(userDto.getApprovedAt());
-        user.setApprovedBy(userDto.getApprovedBy());
-        user.setIsDeleted(userDto.getIsDeleted());
-
-        return user;
-    }
-
     private void copyPropertiesFromDto(User user, UserDto userDto) {
         user.setUserName(userDto.getUserName());
         user.setUserEmail(userDto.getUserEmail());
