@@ -53,13 +53,18 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> optionalUser = userRepository.findById(userId);
 
-        return optionalUser.map(user -> {
+        if (optionalUser.isPresent()) {
+            User existingUser = optionalUser.get();
+
             // Update user fields with values from userDto
-            user = this.copyPropertiesFromDto(userDto);
+            copyPropertiesFromDto(existingUser, userDto);
 
             // Convert and return the updated user as UserDto
-            return userMapper.toDto(userRepository.save(user));
-        });
+            User updatedUser = userRepository.save(existingUser);
+            return Optional.of(userMapper.toDto(updatedUser));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -86,5 +91,18 @@ public class UserServiceImpl implements UserService {
         user.setIsDeleted(userDto.getIsDeleted());
 
         return user;
+    }
+
+    private void copyPropertiesFromDto(User user, UserDto userDto) {
+        user.setUserName(userDto.getUserName());
+        user.setUserEmail(userDto.getUserEmail());
+        user.setUserPassword(userDto.getUserPassword());
+        user.setCreatedAt(userDto.getCreatedAt());
+        user.setCreatedBy(userDto.getCreatedBy());
+        user.setUpdatedAt(userDto.getUpdatedAt());
+        user.setUpdatedBy(userDto.getUpdatedBy());
+        user.setApprovedAt(userDto.getApprovedAt());
+        user.setApprovedBy(userDto.getApprovedBy());
+        user.setIsDeleted(userDto.getIsDeleted());
     }
 }
