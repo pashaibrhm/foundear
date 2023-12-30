@@ -2,6 +2,7 @@ package com.harmonious.foundear.service.user.impl;
 
 import com.harmonious.foundear.dto.user.UserDto;
 import com.harmonious.foundear.entity.user.User;
+import com.harmonious.foundear.mapper.user.UserMapper;
 import com.harmonious.foundear.repository.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -15,11 +16,9 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,12 +28,16 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserMapper userMapper;
+
+    @InjectMocks
     private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        userService = new UserServiceImpl(userRepository);
+        userService = new UserServiceImpl(userRepository, userMapper);
     }
 
     @AfterEach
@@ -45,28 +48,41 @@ class UserServiceImplTest {
     @Test
     void getAllUsers_shouldReturnListOfUsers() {
         // Arrange
-        List<User> users = List.of(new User(), new User());
-        when(userRepository.findAll()).thenReturn(users);
+        User user1 = new User(/* set user properties */);
+        User user2 = new User(/* set user properties */);
+        List<User> userEntities = Arrays.asList(user1, user2);
+
+        when(userRepository.findAll()).thenReturn(userEntities);
+
+        UserDto userDto1 = new UserDto(/* set userDto properties */);
+        UserDto userDto2 = new UserDto(/* set userDto properties */);
+        List<UserDto> expectedUserDtos = Arrays.asList(userDto1, userDto2);
+
+        when(userMapper.toDtos(userEntities)).thenReturn(expectedUserDtos);
 
         // Act
-        List<UserDto> result = userService.getAllUsers();
+        List<UserDto> actualUserDtos = userService.getAllUsers();
 
         // Assert
-        assertEquals(users.size(), result.size());
+        assertEquals(expectedUserDtos, actualUserDtos);
     }
 
     @Test
     void getUserById_shouldReturnUserIfExists() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        User user = new User();
+
+        User user = new User(/* set user properties */);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
+        UserDto expectedUserDto = new UserDto(/* set userDto properties */);
+        when(userMapper.toDto(user)).thenReturn(expectedUserDto);
+
         // Act
-        Optional<UserDto> result = userService.getUserById(userId);
+        Optional<UserDto> actualUserDto = userService.getUserById(userId);
 
         // Assert
-        assertTrue(result.isPresent());
+        assertEquals(Optional.of(expectedUserDto), actualUserDto);
     }
 
     @Test
@@ -85,49 +101,58 @@ class UserServiceImplTest {
     @Test
     void createUser_shouldSaveNewUser() {
         // Arrange
-        UserDto userDto = new UserDto();
-        User newUser = new User();
-        when(userRepository.save(any(User.class))).thenReturn(newUser);
+        UserDto userDto = new UserDto(/* set userDto properties */);
+
+        User userEntity = new User(/* set userEntity properties */);
+        when(userMapper.toEntity(userDto)).thenReturn(userEntity);
+
+        User savedUserEntity = new User(/* set savedUserEntity properties */);
+        when(userRepository.save(userEntity)).thenReturn(savedUserEntity);
+
+        UserDto expectedUserDto = new UserDto(/* set expectedUserDto properties */);
+        when(userMapper.toDto(savedUserEntity)).thenReturn(expectedUserDto);
 
         // Act
-        User result = userService.createUser(userDto);
+        UserDto actualUserDto = userService.createUser(userDto);
 
         // Assert
-        assertNotNull(result);
-        verify(userRepository, times(1)).save(any(User.class));
+        assertEquals(expectedUserDto, actualUserDto);
     }
 
     @Test
     void updateUser_shouldUpdateExistingUser() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        UserDto userDto = new UserDto();
-        User existingUser = new User();
+        UserDto userDto = new UserDto(/* set userDto properties */);
+        userDto.setUserId(userId);
+
+        User existingUser = new User(/* set existingUser properties */);
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(any(User.class))).thenReturn(existingUser);
+
+        User updatedUser = new User(/* set updatedUser properties */);
+        when(userRepository.save(Mockito.any(User.class))).thenReturn(updatedUser);
+
+        UserDto expectedUserDto = new UserDto(/* set expectedUserDto properties */);
+        when(userMapper.toDto(updatedUser)).thenReturn(expectedUserDto);
 
         // Act
-        User result = userService.updateUser(userId, userDto);
+        Optional<UserDto> actualUserDto = userService.updateUser(userId, userDto);
 
         // Assert
-        assertNotNull(result);
-        verify(userRepository, times(1)).save(any(User.class));
+        assertTrue(actualUserDto.isPresent());
+        assertEquals(expectedUserDto, actualUserDto.get());
     }
 
     @Test
-    void updateUser_shouldCreateNewUserIfUserDoesNotExist() {
+    void updateUser_shouldValidateIfTheUserNotExist() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        UserDto userDto = new UserDto();
+        UserDto userDto = new UserDto(/* set userDto properties */);
+
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenReturn(new User());
 
-        // Act
-        User result = userService.updateUser(userId, userDto);
-
-        // Assert
-        assertNotNull(result);
-        verify(userRepository, times(1)).save(any(User.class));
+        // Act and Assert
+        assertThrows(IllegalArgumentException.class, () -> userService.updateUser(userId, userDto));
     }
 
     @Test
