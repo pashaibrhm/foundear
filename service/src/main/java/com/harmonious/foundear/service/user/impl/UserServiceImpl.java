@@ -29,18 +29,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers() {
         List<User> userEntities = userRepository.findAll();
-        return this.convertUserEntitiesToUserDtos(userEntities);
+        return userMapper.toDtos(userEntities);
     }
 
     @Override
     public Optional<UserDto> getUserById(UUID userId) {
-        return userRepository.findById(userId)
-                .map(this::convertUserEntityToUserDto);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        return optionalUser.map(userMapper::toDto);
     }
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        return this.convertUserEntityToUserDto(saveNewUser(userDto));
+        return userMapper.toDto(userRepository.save(userMapper.toEntity(userDto)));
     }
 
     @Override
@@ -57,60 +57,14 @@ public class UserServiceImpl implements UserService {
             // Update user fields with values from userDto
             user = this.copyPropertiesFromDto(userDto);
 
-            // Save the updated user
-            User updatedUser = userRepository.save(user);
-
             // Convert and return the updated user as UserDto
-            return convertUserEntityToUserDto(updatedUser);
+            return userMapper.toDto(userRepository.save(user));
         });
     }
 
     @Override
     public void deleteUser(UUID userId) {
         userRepository.deleteById(userId);
-    }
-
-    /**
-     * Define a new function that takes a userDto as a parameter and returns a user
-     *
-     * @param userDto the userDto to be created
-     * @return User entity
-     */
-    public User saveNewUser(UserDto userDto) {
-        // Convert the userDto to a user entity
-        User newUser = convertUserDtoToUserEntity(userDto);
-        // Save the user to the repository and return it
-        return userRepository.save(newUser);
-    }
-
-    /**
-     * @param userDto The Dto object to be converted
-     * @return User entity
-     */
-    private User convertUserDtoToUserEntity(UserDto userDto) {
-        return userMapper.toEntity(userDto);
-    }
-
-    /**
-     * @param user the user to be converted into dto object
-     * @return UserDto object
-     */
-    private UserDto convertUserEntityToUserDto(User user) {
-        return userMapper.toDto(user);
-    }
-
-    /**
-     * @param users The list of user entities to be converted
-     * @return The list of converted user entities
-     */
-    private List<UserDto> convertUserEntitiesToUserDtos(List<User> users) {
-        List<UserDto> userDtos = new ArrayList<>();
-
-        for (User user : users) {
-            userDtos.add(this.convertUserEntityToUserDto(user));
-        }
-
-        return userDtos;
     }
 
     /**
