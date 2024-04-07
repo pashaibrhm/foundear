@@ -1,6 +1,7 @@
 package com.harmonious.foundear.entity.user;
 
 import com.harmonious.foundear.config.CustomUuidGenerator;
+import com.harmonious.foundear.entity.regional.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,5 +54,29 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id")
+    private City city;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "district_id")
+    private District district;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "village_id")
+    private Village village;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
+    private Country country;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "province_id")
+    private Province province;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Group group;
 
 }
