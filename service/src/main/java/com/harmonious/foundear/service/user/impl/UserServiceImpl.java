@@ -77,13 +77,13 @@ public class UserServiceImpl implements UserService {
      * @param userDto User DTO object that used for copying into user entity object
      */
     private void copyPropertiesFromDto(User user, UserDto userDto) {
-        user.setUserName(userDto.getUserName());
-        user.setUserEmail(userDto.getUserEmail());
-        user.setUserPassword(userDto.getUserPassword());
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
         user.setCreatedAt(userDto.getCreatedAt());
         user.setCreatedBy(userDto.getCreatedBy());
-        user.setUpdatedAt(userDto.getUpdatedAt());
-        user.setUpdatedBy(userDto.getUpdatedBy());
+        user.setLastUpdatedAt(userDto.getLastUpdatedAt());
+        user.setLastUpdatedBy(userDto.getLastUpdatedBy());
         user.setApprovedAt(userDto.getApprovedAt());
         user.setApprovedBy(userDto.getApprovedBy());
         user.setIsDeleted(userDto.getIsDeleted());
