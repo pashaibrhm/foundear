@@ -54,10 +54,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
-            User existingUser = optionalUser.get();
-
-            // Update user fields with values from userDto
-            copyPropertiesFromDto(existingUser, userDto);
+            User existingUser = userMapper.toEntity(userDto);
 
             // Convert and return the updated user as UserDto
             User updatedUser = userRepository.save(existingUser);
@@ -70,22 +67,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(UUID userId) {
         userRepository.deleteById(userId);
-    }
-
-    /**
-     * @param user User to be copied from dto object properties
-     * @param userDto User DTO object that used for copying into user entity object
-     */
-    private void copyPropertiesFromDto(User user, UserDto userDto) {
-        user.setUsername(userDto.getUsername());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        user.setCreatedAt(userDto.getCreatedAt());
-        user.setCreatedBy(userDto.getCreatedBy());
-        user.setLastUpdatedAt(userDto.getLastUpdatedAt());
-        user.setLastUpdatedBy(userDto.getLastUpdatedBy());
-        user.setApprovedAt(userDto.getApprovedAt());
-        user.setApprovedBy(userDto.getApprovedBy());
-        user.setIsDeleted(userDto.getIsDeleted());
     }
 }
