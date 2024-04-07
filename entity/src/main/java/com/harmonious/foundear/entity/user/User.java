@@ -7,9 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -25,26 +29,11 @@ public class User {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(name = "user_name", nullable = false, length = 64)
-    private String userName;
-
-    @Column(name = "user_email", nullable = false, length = 64)
-    private String userEmail;
-
-    @Column(name = "user_password", nullable = false)
-    private String userPassword;
-
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
-
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
-
-    @Column(name = "updated_by", nullable = false)
-    private UUID updatedBy;
 
     @Column(name = "approved_at")
     private Instant approvedAt;
@@ -78,5 +67,49 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @Column(name = "first_name", nullable = false, length = 20)
+    private String firstName;
+
+    @Column(name = "middle_name", length = 20)
+    private String middleName;
+
+    @Column(name = "last_name", length = 20)
+    private String lastName;
+
+    @Column(name = "username", nullable = false, length = 30)
+    private String username;
+
+    @Column(name = "email", nullable = false, length = 50)
+    private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "address_detail")
+    private String addressDetail;
+
+    @Column(name = "last_updated_by", nullable = false)
+    private UUID lastUpdatedBy;
+
+    @Column(name = "last_updated_at", nullable = false)
+    private Instant lastUpdatedAt;
+
+    @Column(name = "last_version_at", nullable = false)
+    private Instant lastVersionAt;
+
+    @ColumnDefault("0")
+    @Column(name = "lock_count", precision = 1)
+    private BigDecimal lockCount;
+
+    @ColumnDefault("0")
+    @Column(name = "is_locked")
+    private Short isLocked;
+
+    @OneToMany(mappedBy = "user")
+    private Set<FailedLoginAttempt> failedLoginAttempts = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserSession> userSessions = new LinkedHashSet<>();
 
 }
