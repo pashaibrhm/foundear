@@ -5,7 +5,6 @@ import com.harmonious.foundear.entity.user.User;
 import com.harmonious.foundear.mapper.user.UserMapper;
 import com.harmonious.foundear.repository.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,12 +12,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneOffset;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -156,12 +151,47 @@ class UserServiceImplTest {
     }
 
     @Test
-    void deleteUser_shouldDeleteUser() {
+    public void testSoftDeleteUser_ExistingUser() throws Exception {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        User user = new User(/* set user properties */);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        // Act
+        userService.softDeleteUser(userId);
+
+        // Assert (verify method behavior, not return value)
+        verify(userRepository).findById(userId);
+        assert user.getIsDeleted().equals(true);
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    public void testSoftDeleteUser_NonexistentUser() throws Exception {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // Act
+        try {
+            userService.softDeleteUser(userId);
+            fail("Expected NoSuchElementException to be thrown"); // If execution reaches here, it's a failure
+        } catch (NoSuchElementException e) {
+            // Expected exception, success
+        }
+
+        // No need to verify interactions with mocks here (optional)
+    }
+
+    @Test
+    void hardDeleteUser_shouldDeleteUser() {
         // Arrange
         UUID userId = UUID.randomUUID();
 
         // Act
-        userService.deleteUser(userId);
+        userService.hardDeleteUser(userId);
 
         // Assert
         verify(userRepository, times(1)).deleteById(userId);

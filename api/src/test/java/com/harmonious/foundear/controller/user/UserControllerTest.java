@@ -136,7 +136,7 @@ class UserControllerTest {
     void deleteUser_shouldReturnNotFoundIfUserDoesNotExist() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        doThrow(new RuntimeException()).when(userService).deleteUser(userId);
+        doThrow(new RuntimeException()).when(userService).hardDeleteUser(userId);
 
         // Act
         ResponseEntity<Void> response = userController.deleteUser(userId);

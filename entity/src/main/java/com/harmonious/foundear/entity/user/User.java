@@ -3,10 +3,7 @@ package com.harmonious.foundear.entity.user;
 import com.harmonious.foundear.config.CustomUuidGenerator;
 import com.harmonious.foundear.entity.regional.*;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,6 +18,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "mst_users", schema = "foundear")
 public class User {
     @Id
@@ -112,4 +110,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<UserSession> userSessions = new LinkedHashSet<>();
 
+    // In your User service or a separate utility class
+    public static User createDummyUser() {
+        return User.builder()
+                .userId(null)
+                .email(null)
+                .password(null)
+                .isDeleted(false)
+                .build();
+    }
 }

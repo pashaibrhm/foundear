@@ -16,5 +16,7 @@ public interface UserService {
 
     Optional<UserDto> updateUser(UUID userId, UserDto userDto);
 
-    void deleteUser(UUID userId);
+    void softDeleteUser(UUID userId);
+
+    void hardDeleteUser(UUID userId);
 }
