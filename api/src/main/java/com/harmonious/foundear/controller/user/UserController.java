@@ -61,10 +61,15 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
-        try {
-            userService.softDeleteUser(userId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (RuntimeException e) {
+        Optional<UserDto> userOptional = userService.getUserById(userId);
+        if(userOptional.isPresent()) {
+            try {
+                userService.softDeleteUser(userId);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } catch (RuntimeException e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

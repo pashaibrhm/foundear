@@ -5,6 +5,7 @@ import com.harmonious.foundear.entity.user.FailedLoginAttempt;
 import com.harmonious.foundear.entity.user.Group;
 import com.harmonious.foundear.entity.user.UserSession;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
+@Builder
 public class UserDto implements Serializable {
     private UUID userId;
     private Instant createdAt;

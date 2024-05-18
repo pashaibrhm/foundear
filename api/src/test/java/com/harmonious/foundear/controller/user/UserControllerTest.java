@@ -1,6 +1,8 @@
 package com.harmonious.foundear.controller.user;
 
 import com.harmonious.foundear.dto.user.UserDto;
+import com.harmonious.foundear.entity.regional.*;
+import com.harmonious.foundear.entity.user.Group;
 import com.harmonious.foundear.service.user.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,13 +12,15 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserControllerTest {
 
@@ -124,24 +128,98 @@ class UserControllerTest {
     void deleteUser_shouldReturnNoContentIfUserExists() {
         // Arrange
         UUID userId = UUID.randomUUID();
+        UserDto userDto = UserDto.builder()
+                .userId(userId)
+                .createdAt(Instant.now())
+                .createdBy(UUID.randomUUID())
+                .approvedBy(UUID.randomUUID())
+                .isDeleted(false)
+                .city(new City())
+                .district(new District())
+                .village(new Village())
+                .country(new Country())
+                .approvedAt(Instant.now())
+                .province(new Province())
+                .group(new Group())
+                .firstName("John")
+                .middleName("A")
+                .lastName("Doe")
+                .username("johndoe")
+                .email("johndoe@example.com")
+                .password("securepassword")
+                .addressDetail("123 Main St")
+                .lastUpdatedBy(UUID.randomUUID())
+                .lastUpdatedAt(Instant.now())
+                .lastVersionAt(Instant.now())
+                .lockCount(BigDecimal.ZERO)
+                .isLocked((short) 0)
+                .failedLoginAttempts(new LinkedHashSet<>())
+                .userSessions(new LinkedHashSet<>())
+                .build();
+        when(userService.getUserById(userId)).thenReturn(Optional.of(userDto));
 
         // Act
         ResponseEntity<Void> response = userController.deleteUser(userId);
 
         // Assert
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(userService, times(1)).softDeleteUser(userId);
     }
 
     @Test
     void deleteUser_shouldReturnNotFoundIfUserDoesNotExist() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        doThrow(new RuntimeException()).when(userService).hardDeleteUser(userId);
+        when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
         // Act
         ResponseEntity<Void> response = userController.deleteUser(userId);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(userService, never()).softDeleteUser(userId);
+    }
+
+    @Test
+    void deleteUser_shouldReturnInternalServerErrorOnException() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        UserDto userDto = UserDto.builder()
+                .userId(userId)
+                .createdAt(Instant.now())
+                .createdBy(UUID.randomUUID())
+                .approvedBy(UUID.randomUUID())
+                .isDeleted(false)
+                .city(new City())
+                .district(new District())
+                .village(new Village())
+                .country(new Country())
+                .approvedAt(Instant.now())
+                .province(new Province())
+                .group(new Group())
+                .firstName("John")
+                .middleName("A")
+                .lastName("Doe")
+                .username("johndoe")
+                .email("johndoe@example.com")
+                .password("securepassword")
+                .addressDetail("123 Main St")
+                .lastUpdatedBy(UUID.randomUUID())
+                .lastUpdatedAt(Instant.now())
+                .lastVersionAt(Instant.now())
+                .lockCount(BigDecimal.ZERO)
+                .isLocked((short) 0)
+                .failedLoginAttempts(new LinkedHashSet<>())
+                .userSessions(new LinkedHashSet<>())
+                .build();
+        when(userService.getUserById(userId)).thenReturn(Optional.of(userDto));
+        doThrow(new RuntimeException("Database error")).when(userService).softDeleteUser(userId);
+
+        // Act
+        ResponseEntity<Void> response = userController.deleteUser(userId);
+
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        verify(userService, times(1)).softDeleteUser(userId);
     }
 }
