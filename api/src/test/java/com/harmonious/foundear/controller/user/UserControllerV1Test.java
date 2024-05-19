@@ -22,19 +22,19 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class UserControllerTest {
+class UserControllerV1Test {
 
     private AutoCloseable closeable;
 
     @Mock
     private UserService userService;
 
-    private UserController userController;
+    private UserControllerV1 userControllerV1;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        userController = new UserController(userService);
+        userControllerV1 = new UserControllerV1(userService);
     }
 
     @AfterEach
@@ -49,7 +49,7 @@ class UserControllerTest {
         when(userService.getAllUsers()).thenReturn(users);
 
         // Act
-        ResponseEntity<List<UserDto>> response = userController.getAllUsers();
+        ResponseEntity<List<UserDto>> response = userControllerV1.getAllUsers();
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -64,7 +64,7 @@ class UserControllerTest {
         when(userService.getUserById(userId)).thenReturn(user);
 
         // Act
-        ResponseEntity<Optional<UserDto>> response = userController.getUserById(userId);
+        ResponseEntity<Optional<UserDto>> response = userControllerV1.getUserById(userId);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -78,7 +78,7 @@ class UserControllerTest {
         when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<Optional<UserDto>> response = userController.getUserById(userId);
+        ResponseEntity<Optional<UserDto>> response = userControllerV1.getUserById(userId);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -91,7 +91,7 @@ class UserControllerTest {
         UserDto userDto = new UserDto();
 
         // Act
-        ResponseEntity<UserDto> response = userController.createUser(userDto);
+        ResponseEntity<UserDto> response = userControllerV1.createUser(userDto);
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -104,7 +104,7 @@ class UserControllerTest {
         UserDto userDto = new UserDto();
 
         // Act
-        ResponseEntity<Optional<UserDto>> response = userController.updateUser(userId, userDto);
+        ResponseEntity<Optional<UserDto>> response = userControllerV1.updateUser(userId, userDto);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -118,7 +118,7 @@ class UserControllerTest {
         doThrow(new RuntimeException()).when(userService).updateUser(userId, userDto);
 
         // Act
-        ResponseEntity<Optional<UserDto>> response = userController.updateUser(userId, userDto);
+        ResponseEntity<Optional<UserDto>> response = userControllerV1.updateUser(userId, userDto);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -159,7 +159,7 @@ class UserControllerTest {
         when(userService.getUserById(userId)).thenReturn(Optional.of(userDto));
 
         // Act
-        ResponseEntity<Void> response = userController.deleteUser(userId);
+        ResponseEntity<Void> response = userControllerV1.deleteUser(userId);
 
         // Assert
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
@@ -173,7 +173,7 @@ class UserControllerTest {
         when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<Void> response = userController.deleteUser(userId);
+        ResponseEntity<Void> response = userControllerV1.deleteUser(userId);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -216,7 +216,7 @@ class UserControllerTest {
         doThrow(new RuntimeException("Database error")).when(userService).softDeleteUser(userId);
 
         // Act
-        ResponseEntity<Void> response = userController.deleteUser(userId);
+        ResponseEntity<Void> response = userControllerV1.deleteUser(userId);
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());

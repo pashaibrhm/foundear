@@ -13,12 +13,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class UserControllerV1 {
 
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserControllerV1(UserService userService) {
         this.userService = userService;
     }
 
