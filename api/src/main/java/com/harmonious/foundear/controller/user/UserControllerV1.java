@@ -1,6 +1,6 @@
 package com.harmonious.foundear.controller.user;
 
-import com.harmonious.foundear.dto.user.UserDto;
+import com.harmonious.foundear.dto.user.user.UserDto;
 import com.harmonious.foundear.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

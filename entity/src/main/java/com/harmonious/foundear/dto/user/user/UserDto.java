@@ -1,4 +1,4 @@
-package com.harmonious.foundear.dto.user;
+package com.harmonious.foundear.dto.user.user;
 
 import com.harmonious.foundear.entity.regional.*;
 import com.harmonious.foundear.entity.user.FailedLoginAttempt;

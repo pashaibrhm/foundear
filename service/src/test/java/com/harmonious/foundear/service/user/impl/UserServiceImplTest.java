@@ -1,8 +1,8 @@
 package com.harmonious.foundear.service.user.impl;
 
-import com.harmonious.foundear.dto.user.UserDto;
+import com.harmonious.foundear.dto.user.user.UserDto;
 import com.harmonious.foundear.entity.user.User;
-import com.harmonious.foundear.mapper.user.UserMapper;
+import com.harmonious.foundear.mapper.user.user.UserMapper;
 import com.harmonious.foundear.repository.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,6 @@
 package com.harmonious.foundear.controller.user;
 
-import com.harmonious.foundear.dto.user.UserDto;
+import com.harmonious.foundear.dto.user.user.UserDto;
 import com.harmonious.foundear.entity.regional.*;
 import com.harmonious.foundear.entity.user.Group;
 import com.harmonious.foundear.service.user.UserService;
