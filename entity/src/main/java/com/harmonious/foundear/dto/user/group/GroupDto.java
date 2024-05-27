@@ -24,7 +24,7 @@ import java.util.UUID;
 public class GroupDto implements Serializable {
     private UUID id;
     private UUID parentId;
-    private Organization org;
+    private transient Organization org;
     private String name;
     private UUID createdBy;
     private Instant createdAt;
@@ -34,6 +34,7 @@ public class GroupDto implements Serializable {
     private Instant approvedAt;
     private Instant lastVersionAt;
     private Short isDeleted;
-    private Set<GroupFunctionPermission> groupFunctionPermissions = new LinkedHashSet<>();
-    private Set<UserDto> users = new LinkedHashSet<>();
+    @Builder.Default
+    private transient Set<GroupFunctionPermission> groupFunctionPermissions = new LinkedHashSet<>();
+    private transient Set<UserDto> users = new LinkedHashSet<>();
 }

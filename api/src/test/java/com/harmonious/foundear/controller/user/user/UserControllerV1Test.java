@@ -1,9 +1,9 @@
-package com.harmonious.foundear.controller.user;
+package com.harmonious.foundear.controller.user.user;
 
 import com.harmonious.foundear.dto.user.user.UserDto;
 import com.harmonious.foundear.entity.regional.*;
 import com.harmonious.foundear.entity.user.Group;
-import com.harmonious.foundear.service.user.UserService;
+import com.harmonious.foundear.service.user.user.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -128,34 +128,9 @@ class UserControllerV1Test {
     void deleteUser_shouldReturnNoContentIfUserExists() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        UserDto userDto = UserDto.builder()
-                .userId(userId)
-                .createdAt(Instant.now())
-                .createdBy(UUID.randomUUID())
-                .approvedBy(UUID.randomUUID())
-                .isDeleted(false)
-                .city(new City())
-                .district(new District())
-                .village(new Village())
-                .country(new Country())
-                .approvedAt(Instant.now())
-                .province(new Province())
-                .group(new Group())
-                .firstName("John")
-                .middleName("A")
-                .lastName("Doe")
-                .username("johndoe")
-                .email("johndoe@example.com")
-                .password("securepassword")
-                .addressDetail("123 Main St")
-                .lastUpdatedBy(UUID.randomUUID())
-                .lastUpdatedAt(Instant.now())
-                .lastVersionAt(Instant.now())
-                .lockCount(BigDecimal.ZERO)
-                .isLocked((short) 0)
-                .failedLoginAttempts(new LinkedHashSet<>())
-                .userSessions(new LinkedHashSet<>())
-                .build();
+        UserDto userDto = UserDto.createDummyUserDto();
+        userDto.setId(userId);
+
         when(userService.getUserById(userId)).thenReturn(Optional.of(userDto));
 
         // Act
@@ -185,11 +160,11 @@ class UserControllerV1Test {
         // Arrange
         UUID userId = UUID.randomUUID();
         UserDto userDto = UserDto.builder()
-                .userId(userId)
+                .id(userId)
                 .createdAt(Instant.now())
                 .createdBy(UUID.randomUUID())
                 .approvedBy(UUID.randomUUID())
-                .isDeleted(false)
+                .isDeleted((short) 0)
                 .city(new City())
                 .district(new District())
                 .village(new Village())

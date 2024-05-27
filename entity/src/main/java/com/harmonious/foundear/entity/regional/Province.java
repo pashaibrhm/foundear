@@ -3,8 +3,7 @@ package com.harmonious.foundear.entity.regional;
 import com.harmonious.foundear.entity.user.Branch;
 import com.harmonious.foundear.entity.user.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
@@ -15,6 +14,9 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Table(name = "mst_provinces", schema = "regional")
 public class Province {
     @Id

@@ -4,10 +4,13 @@ import com.harmonious.foundear.dto.user.group.GroupDto;
 import com.harmonious.foundear.entity.user.Group;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        componentModel = MappingConstants.ComponentModel.SPRING)
+import java.util.List;
+
+@Mapper(componentModel = "spring")
 public interface GroupMapper {
     Group toEntity(GroupDto groupDto);
+
+    List<Group> toEntities(List<GroupDto> groupDtos);
 
     @AfterMapping
     default void linkGroupFunctionPermissions(@MappingTarget Group group) {
@@ -21,6 +24,8 @@ public interface GroupMapper {
     }
 
     GroupDto toDto(Group group);
+
+    List<GroupDto> toDtos(List<Group> groups);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Group partialUpdate(GroupDto groupDto, @MappingTarget Group group);

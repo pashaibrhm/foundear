@@ -1,4 +1,4 @@
-package com.harmonious.foundear.service.user;
+package com.harmonious.foundear.service.user.user;
 
 import com.harmonious.foundear.dto.user.user.UserDto;
 
@@ -16,7 +16,7 @@ public interface UserService {
 
     Optional<UserDto> updateUser(UUID userId, UserDto userDto);
 
-    void softDeleteUser(UUID userId);
+    Optional<UserDto> deleteUser(UUID userId);
 
-    void hardDeleteUser(UUID userId);
+    Optional<UserDto> softDeleteUser(UUID userId);
 }

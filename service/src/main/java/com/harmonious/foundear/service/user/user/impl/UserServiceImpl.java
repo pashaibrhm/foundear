@@ -1,10 +1,10 @@
-package com.harmonious.foundear.service.user.impl;
+package com.harmonious.foundear.service.user.user.impl;
 
 import com.harmonious.foundear.dto.user.user.UserDto;
 import com.harmonious.foundear.entity.user.User;
 import com.harmonious.foundear.mapper.user.user.UserMapper;
-import com.harmonious.foundear.repository.user.UserRepository;
-import com.harmonious.foundear.service.user.UserService;
+import com.harmonious.foundear.repository.user.user.UserRepository;
+import com.harmonious.foundear.service.user.user.UserService;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +40,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDto> getUserById(UUID userId) {
-        logger.info("Fetching user by ID: {}", userId);
+        logInfo(userId);
         Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            logger.warn("User with ID {} not found", userId);
+            return Optional.empty();
+        }
         return optionalUser.map(userMapper::toDto);
     }
 
@@ -55,11 +59,11 @@ public class UserServiceImpl implements UserService {
     public Optional<UserDto> updateUser(UUID userId, UserDto userDto) {
         Objects.requireNonNull(userDto, "UserDto cannot be null");
 
-        if (!Objects.equals(userId, userDto.getUserId())) {
+        if (!Objects.equals(userId, userDto.getId())) {
             throw new IllegalArgumentException("UserDto id does not match with userId");
         }
 
-        logger.info("Fetching user by ID: {}", userId);
+        logInfo(userId);
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
@@ -74,25 +78,39 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public void softDeleteUser(UUID userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-
-        if (optionalUser.isPresent()) {
-            User existingUser = optionalUser.get();
-            existingUser.setIsDeleted(true);
-
-            logger.info("Soft deleting user: {}", userId);
-            userRepository.save(existingUser);
-        } else {
-            logger.warn("User with ID {} not found for soft delete", userId);
-            throw new NoSuchElementException("User with ID " + userId + " not found.");
-        }
+    private void logInfo(UUID userId) {
+        logger.info("Fetching user by ID: {}", userId);
     }
 
     @Override
-    public void hardDeleteUser(UUID userId) {
-        logger.info("Hard deleting user: {}", userId);
-        userRepository.deleteById(userId);
+    public Optional<UserDto> deleteUser(UUID userId) {
+        logger.info("Deleting user: {}", userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User existingUser = optionalUser.get();
+            userRepository.delete(existingUser);
+            return Optional.of(userMapper.toDto(existingUser));
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<UserDto> softDeleteUser(UUID userId) {
+        try {
+            return Optional.of(userRepository.findById(userId)
+                    .map(user -> {
+                        user.setIsDeleted((short) 1);
+                        logger.info("Soft deleting user: {}", userId);
+                        userRepository.save(user);
+                        return user;
+                    })
+                    .orElseThrow(() -> {
+                        logger.warn("User with ID {} not found for soft delete", userId);
+                        return new NoSuchElementException("User with ID " + userId + " not found.");
+                    })).map(userMapper::toDto);
+        } catch (NoSuchElementException e) {
+            // Optionally handle the exception or rethrow
+            return Optional.empty(); // Or rethrow if preferred
+        }
     }
 }

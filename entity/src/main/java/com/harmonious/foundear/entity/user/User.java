@@ -24,8 +24,8 @@ public class User {
     @Id
     @GeneratedValue(generator = "custom-uuid")
     @GenericGenerator(name = "custom-uuid", type = CustomUuidGenerator.class)
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "id", nullable = false)
+    private UUID id;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -40,7 +40,8 @@ public class User {
     private UUID approvedBy;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+    @Builder.Default
+    private Short isDeleted = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
@@ -105,18 +106,39 @@ public class User {
     private Short isLocked;
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private Set<FailedLoginAttempt> failedLoginAttempts = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private Set<UserSession> userSessions = new LinkedHashSet<>();
 
     // In your User service or a separate utility class
     public static User createDummyUser() {
         return User.builder()
-                .userId(null)
-                .email(null)
-                .password(null)
-                .isDeleted(false)
+                .id(UUID.randomUUID())
+                .email("dummy@dummy")
+                .password("dummypass")
+                .isDeleted((short) 0)
+                .city(City.builder().id(UUID.randomUUID()).build())
+                .district(District.builder().id(UUID.randomUUID()).build())
+                .village(Village.builder().id(UUID.randomUUID()).build())
+                .country(Country.builder().id(UUID.randomUUID()).build())
+                .province(Province.builder().id(UUID.randomUUID()).build())
+                .group(Group.builder().id(UUID.randomUUID()).build())
+                .firstName("FirstDummy")
+                .middleName("MiddleDummy")
+                .lastName("LastDummy")
+                .username("dummy")
+                .addressDetail("Dummy")
+                .approvedAt(Instant.now())
+                .lastUpdatedBy(UUID.randomUUID())
+                .lastUpdatedAt(Instant.now())
+                .lastVersionAt(Instant.now())
+                .lockCount(BigDecimal.ZERO)
+                .isLocked((short) 0)
+                .failedLoginAttempts(new LinkedHashSet<>())
+                .userSessions(new LinkedHashSet<>())
                 .build();
     }
 }

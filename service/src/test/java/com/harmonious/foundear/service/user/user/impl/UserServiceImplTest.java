@@ -1,9 +1,9 @@
-package com.harmonious.foundear.service.user.impl;
+package com.harmonious.foundear.service.user.user.impl;
 
 import com.harmonious.foundear.dto.user.user.UserDto;
 import com.harmonious.foundear.entity.user.User;
 import com.harmonious.foundear.mapper.user.user.UserMapper;
-import com.harmonious.foundear.repository.user.UserRepository;
+import com.harmonious.foundear.repository.user.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
 class UserServiceImplTest {
 
     private AutoCloseable closeable;
+
     @Mock
     private UserRepository userRepository;
 
@@ -118,16 +119,18 @@ class UserServiceImplTest {
     void updateUser_shouldUpdateExistingUser() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        UserDto userDto = new UserDto(/* set userDto properties */);
-        userDto.setUserId(userId);
+        UserDto userDto = UserDto.createDummyUserDto();
+        userDto.setId(userId);
 
-        User existingUser = new User(/* set existingUser properties */);
+        User existingUser = User.createDummyUser();
+        existingUser.setId(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
-        User updatedUser = new User(/* set updatedUser properties */);
+        User updatedUser = User.createDummyUser();
+        updatedUser.setId(userId);
         when(userRepository.save(Mockito.any(User.class))).thenReturn(updatedUser);
 
-        UserDto expectedUserDto = new UserDto(/* set expectedUserDto properties */);
+        UserDto expectedUserDto = userMapper.toDto(updatedUser);
         when(userMapper.toDto(updatedUser)).thenReturn(expectedUserDto);
 
         // Act
@@ -151,49 +154,82 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void testSoftDeleteUser_ExistingUser() throws Exception {
+    void softDeleteUser_shouldSoftDeleteExistingUser() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        User user = new User(/* set user properties */);
+        User user = new User(); // Create user instance
+        user.setId(userId);
+        UserDto userDto = new UserDto(); // Create UserDto instance
+        userDto.setId(userId);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userMapper.toDto(user)).thenReturn(userDto);
 
         // Act
-        userService.softDeleteUser(userId);
+        Optional<UserDto> result = userService.softDeleteUser(userId);
 
-        // Assert (verify method behavior, not return value)
-        verify(userRepository).findById(userId);
-        assert user.getIsDeleted().equals(true);
-        verify(userRepository).save(user);
+        // Assert
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).save(user);
+        verify(userMapper, times(1)).toDto(user);
+        assertTrue(result.isPresent());
+        assertEquals(userDto, result.get());
     }
 
     @Test
-    public void testSoftDeleteUser_NonexistentUser() throws Exception {
+    void softDeleteUser_shouldReturnEmptyIfUserNotFound() {
         // Arrange
         UUID userId = UUID.randomUUID();
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         // Act
-        try {
-            userService.softDeleteUser(userId);
-            fail("Expected NoSuchElementException to be thrown"); // If execution reaches here, it's a failure
-        } catch (NoSuchElementException e) {
-            // Expected exception, success
-        }
+        Optional<UserDto> result = userService.softDeleteUser(userId);
 
-        // No need to verify interactions with mocks here (optional)
+        // Assert
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(0)).save(any(User.class));
+        verify(userMapper, times(0)).toDto(any(User.class));
+        assertFalse(result.isPresent());
     }
 
     @Test
-    void hardDeleteUser_shouldDeleteUser() {
+    void hardDeleteUser_shouldDeleteExistingUser() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        User user = new User(); // Assuming a constructor or a builder pattern to create a user
+        user.setId(userId);
+        UserDto userDto = new UserDto(); // Assuming a constructor or a builder pattern to create a user DTO
+        userDto.setId(userId);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userMapper.toDto(user)).thenReturn(userDto);
+
+        // Act
+        Optional<UserDto> result = userService.deleteUser(userId);
+
+        // Assert
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).delete(user);
+        verify(userMapper, times(1)).toDto(user);
+        assertTrue(result.isPresent());
+        assertEquals(userDto, result.get());
+    }
+
+    @Test
+    void hardDeleteUser_shouldReturnEmptyIfUserNotFound() {
         // Arrange
         UUID userId = UUID.randomUUID();
 
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
         // Act
-        userService.hardDeleteUser(userId);
+        Optional<UserDto> result = userService.deleteUser(userId);
 
         // Assert
-        verify(userRepository, times(1)).deleteById(userId);
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(0)).delete(any(User.class));
+        verify(userMapper, times(0)).toDto(any(User.class));
+        assertFalse(result.isPresent());
     }
 }

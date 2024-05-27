@@ -1,4 +1,4 @@
-package com.harmonious.foundear.repository.user;
+package com.harmonious.foundear.repository.user.user;
 
 import com.harmonious.foundear.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
-package com.harmonious.foundear.controller.user;
+package com.harmonious.foundear.controller.user.user;
 
 import com.harmonious.foundear.dto.user.user.UserDto;
-import com.harmonious.foundear.service.user.UserService;
+import com.harmonious.foundear.service.user.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
