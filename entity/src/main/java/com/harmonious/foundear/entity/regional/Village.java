@@ -1,7 +1,7 @@
 package com.harmonious.foundear.entity.regional;
 
-import com.harmonious.foundear.entity.user.Branch;
-import com.harmonious.foundear.entity.user.User;
+import com.harmonious.foundear.entity.auth.Branch;
+import com.harmonious.foundear.entity.auth.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

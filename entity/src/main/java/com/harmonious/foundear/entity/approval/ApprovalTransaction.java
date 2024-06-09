@@ -1,6 +1,6 @@
 package com.harmonious.foundear.entity.approval;
 
-import com.harmonious.foundear.entity.user.Function;
+import com.harmonious.foundear.entity.auth.Function;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
