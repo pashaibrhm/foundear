@@ -11,10 +11,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_entity_files", schema = "foundear")
+@Table(name = "mst_entity_file", schema = "foundear")
 public class EntityFile {
     @Id
-    @Column(name = "entity_file_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -25,7 +25,7 @@ public class EntityFile {
     private UUID entityId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lookup_entity_type", nullable = false)
+    @JoinColumn(name = "entity_type", nullable = false)
     private LookupDetail lookupEntityType;
 
     @Column(name = "created_by", nullable = false)

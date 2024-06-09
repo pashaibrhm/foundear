@@ -12,10 +12,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_approval_level_approvers", schema = "approval")
+@Table(name = "mst_approval_level_approver", schema = "approval")
 public class ApprovalLevelApprover {
     @Id
-    @Column(name = "approval_level_approver_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

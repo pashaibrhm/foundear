@@ -13,10 +13,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_organizations", schema = "foundear")
+@Table(name = "mst_organization", schema = "auth")
 public class Organization {
     @Id
-    @Column(name = "org_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @Column(name = "name", nullable = false, length = 20)

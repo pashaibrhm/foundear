@@ -13,10 +13,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_lookup_headers", schema = "foundear")
+@Table(name = "mst_lookup_header", schema = "lookup")
 public class LookupHeader {
     @Id
-    @Column(name = "header_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @Column(name = "name", length = 30)

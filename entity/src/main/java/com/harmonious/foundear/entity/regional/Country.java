@@ -17,16 +17,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "mst_countries", schema = "regional")
+@Table(name = "mst_country", schema = "regional")
 public class Country {
     @Id
-    @Column(name = "country_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "country_code", nullable = false, length = 10)
+    @Column(name = "code", nullable = false, length = 10)
     private String countryCode;
 
-    @Column(name = "country_name", nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String countryName;
 
     @Column(name = "is_active", nullable = false)

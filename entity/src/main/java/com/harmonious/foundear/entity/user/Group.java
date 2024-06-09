@@ -15,10 +15,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "mst_groups", schema = "foundear")
+@Table(name = "mst_group", schema = "auth")
 public class Group {
     @Id
-    @Column(name = "group_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @Column(name = "parent_id")

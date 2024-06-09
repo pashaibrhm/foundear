@@ -12,14 +12,14 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_branches", schema = "foundear")
+@Table(name = "mst_branch", schema = "auth")
 public class Branch {
     @Id
-    @Column(name = "branch_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "branch_type", nullable = false)
+    @JoinColumn(name = "type", nullable = false)
     private LookupDetail branchType;
 
     @Column(name = "entity_id", nullable = false)
@@ -29,16 +29,16 @@ public class Branch {
     @JoinColumn(name = "entity_type", nullable = false)
     private LookupDetail entityType;
 
-    @Column(name = "branch_code", nullable = false, length = 20)
+    @Column(name = "code", nullable = false, length = 20)
     private String branchCode;
 
-    @Column(name = "branch_name", nullable = false, length = 30)
+    @Column(name = "name", nullable = false, length = 30)
     private String branchName;
 
-    @Column(name = "branch_email", length = 50)
+    @Column(name = "email", length = 50)
     private String branchEmail;
 
-    @Column(name = "branch_phone_no", length = 20)
+    @Column(name = "phone_no", length = 20)
     private String branchPhoneNo;
 
     @Column(name = "address_detail")

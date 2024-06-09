@@ -10,10 +10,10 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-@Table(name = "mst_failed_login_attempts", schema = "foundear")
+@Table(name = "mst_failed_login_attempt", schema = "auth")
 public class FailedLoginAttempt {
     @Id
-    @Column(name = "attempt_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)

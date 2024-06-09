@@ -10,10 +10,10 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-@Table(name = "mst_user_sessions", schema = "foundear")
+@Table(name = "mst_user_session", schema = "auth")
 public class UserSession {
     @Id
-    @Column(name = "session_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

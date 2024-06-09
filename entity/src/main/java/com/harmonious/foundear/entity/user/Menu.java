@@ -13,16 +13,16 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_menus", schema = "foundear")
+@Table(name = "mst_menu", schema = "auth")
 public class Menu {
     @Id
-    @Column(name = "menu_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @Column(name = "parent_id", nullable = false)
     private UUID parentId;
 
-    @Column(name = "menu_name", nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String menuName;
 
     @Column(name = "created_by", nullable = false)
@@ -56,5 +56,11 @@ public class Menu {
 
     @OneToMany(mappedBy = "menu")
     private Set<Function> functions = new LinkedHashSet<>();
+
+    @Column(name = "code", nullable = false, length = 30)
+    private String code;
+
+    @Column(name = "title", nullable = false, length = 30)
+    private String title;
 
 }

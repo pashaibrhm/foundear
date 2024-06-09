@@ -17,20 +17,20 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "mst_villages", schema = "regional")
+@Table(name = "mst_village", schema = "regional")
 public class Village {
     @Id
-    @Column(name = "village_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     private District district;
 
-    @Column(name = "village_code", nullable = false, length = 10)
+    @Column(name = "code", nullable = false, length = 10)
     private String villageCode;
 
-    @Column(name = "village_name", nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String villageName;
 
     @Column(name = "is_active", nullable = false)

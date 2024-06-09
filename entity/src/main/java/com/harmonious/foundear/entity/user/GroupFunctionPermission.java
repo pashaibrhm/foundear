@@ -9,10 +9,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_group_function_permissions", schema = "foundear")
+@Table(name = "mst_group_function_permission", schema = "auth")
 public class GroupFunctionPermission {
     @Id
-    @Column(name = "permission_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

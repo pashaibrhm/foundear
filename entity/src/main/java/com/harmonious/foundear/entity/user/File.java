@@ -13,16 +13,16 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_files", schema = "foundear")
+@Table(name = "mst_file", schema = "foundear")
 public class File {
     @Id
-    @Column(name = "file_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "file_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String fileName;
 
-    @Column(name = "file_data", nullable = false)
+    @Column(name = "data", nullable = false)
     private byte[] fileData;
 
     @Column(name = "created_by", nullable = false)

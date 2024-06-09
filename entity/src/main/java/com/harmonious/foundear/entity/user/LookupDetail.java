@@ -13,14 +13,14 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_lookup_details", schema = "foundear")
+@Table(name = "mst_lookup_detail", schema = "lookup")
 public class LookupDetail {
     @Id
-    @Column(name = "detail_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "header_id")
+    @JoinColumn(name = "lookup_header_id", nullable = false)
     private LookupHeader header;
 
     @Column(name = "name", length = 30)

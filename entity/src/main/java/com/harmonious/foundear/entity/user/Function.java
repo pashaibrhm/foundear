@@ -15,10 +15,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_functions", schema = "foundear")
+@Table(name = "mst_function", schema = "auth")
 public class Function {
     @Id
-    @Column(name = "function_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @Column(name = "parent_id", nullable = false)
@@ -28,7 +28,7 @@ public class Function {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @Column(name = "function_name", nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String functionName;
 
     @Column(name = "created_by", nullable = false)
@@ -68,5 +68,8 @@ public class Function {
 
     @OneToMany(mappedBy = "function")
     private Set<GroupFunctionPermission> groupFunctionPermissions = new LinkedHashSet<>();
+
+    @Column(name = "code", nullable = false, length = 30)
+    private String code;
 
 }
