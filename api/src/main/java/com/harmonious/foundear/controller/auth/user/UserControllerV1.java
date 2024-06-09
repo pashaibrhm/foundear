@@ -62,6 +62,7 @@ public class UserControllerV1 {
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
         Optional<UserDto> userOptional = userService.getUserById(userId);
+
         if(userOptional.isPresent()) {
             try {
                 userService.softDeleteUser(userId);

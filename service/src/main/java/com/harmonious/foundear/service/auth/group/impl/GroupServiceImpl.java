@@ -51,9 +51,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Optional<GroupDto> createGroup(GroupDto groupDto) {
+    public GroupDto createGroup(GroupDto groupDto) {
         logger.info("Creating group: {}", groupDto);
-        return Optional.of(groupMapper.toDto(groupRepository.save(groupMapper.toEntity(groupDto))));
+        return groupMapper.toDto(groupRepository.save(groupMapper.toEntity(groupDto)));
     }
 
     @Override
