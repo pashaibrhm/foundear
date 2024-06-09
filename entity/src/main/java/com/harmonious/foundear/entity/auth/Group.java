@@ -1,30 +1,35 @@
-package com.harmonious.foundear.entity.approval;
+package com.harmonious.foundear.entity.auth;
 
-import com.harmonious.foundear.entity.auth.Function;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
-@Getter
 @Setter
+@Getter
 @Entity
-@Table(name = "mst_approval_function", schema = "approval")
-public class ApprovalFunction {
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = "mst_group", schema = "auth")
+public class Group {
     @Id
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "approval_setup_id", nullable = false)
-    private ApprovalSetup approvalSetup;
+    @Column(name = "parent_id")
+    private UUID parentId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "function_id", nullable = false)
-    private Function function;
+    @JoinColumn(name = "org_id", nullable = false)
+    private Organization org;
+
+    @Column(name = "name", nullable = false, length = 30)
+    private String name;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
@@ -38,11 +43,11 @@ public class ApprovalFunction {
     @Column(name = "last_updated_at", nullable = false)
     private Instant lastUpdatedAt;
 
-    @Column(name = "last_approved_by")
-    private UUID lastApprovedBy;
+    @Column(name = "approved_by")
+    private UUID approvedBy;
 
-    @Column(name = "last_approved_at")
-    private Instant lastApprovedAt;
+    @Column(name = "approved_at")
+    private Instant approvedAt;
 
     @Column(name = "last_version_at", nullable = false)
     private Instant lastVersionAt;
@@ -50,5 +55,11 @@ public class ApprovalFunction {
     @ColumnDefault("0")
     @Column(name = "is_deleted", nullable = false)
     private Short isDeleted;
+
+    @OneToMany(mappedBy = "group")
+    private Set<GroupFunctionPermission> groupFunctionPermissions = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "group")
+    private Set<User> users = new LinkedHashSet<>();
 
 }

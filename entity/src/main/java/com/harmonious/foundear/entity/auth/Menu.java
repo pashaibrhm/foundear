@@ -1,30 +1,29 @@
-package com.harmonious.foundear.entity.approval;
+package com.harmonious.foundear.entity.auth;
 
-import com.harmonious.foundear.entity.auth.Function;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_approval_function", schema = "approval")
-public class ApprovalFunction {
+@Table(name = "mst_menu", schema = "auth")
+public class Menu {
     @Id
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "approval_setup_id", nullable = false)
-    private ApprovalSetup approvalSetup;
+    @Column(name = "parent_id", nullable = false)
+    private UUID parentId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "function_id", nullable = false)
-    private Function function;
+    @Column(name = "name", nullable = false, length = 50)
+    private String menuName;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
@@ -47,8 +46,21 @@ public class ApprovalFunction {
     @Column(name = "last_version_at", nullable = false)
     private Instant lastVersionAt;
 
+    @ColumnDefault("1")
+    @Column(name = "is_active", nullable = false)
+    private Short isActive;
+
     @ColumnDefault("0")
     @Column(name = "is_deleted", nullable = false)
     private Short isDeleted;
+
+    @OneToMany(mappedBy = "menu")
+    private Set<Function> functions = new LinkedHashSet<>();
+
+    @Column(name = "code", nullable = false, length = 30)
+    private String code;
+
+    @Column(name = "title", nullable = false, length = 30)
+    private String title;
 
 }

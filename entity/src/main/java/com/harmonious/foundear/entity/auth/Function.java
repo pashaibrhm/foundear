@@ -1,5 +1,7 @@
-package com.harmonious.foundear.entity.approval;
+package com.harmonious.foundear.entity.auth;
 
+import com.harmonious.foundear.entity.approval.ApprovalFunction;
+import com.harmonious.foundear.entity.approval.ApprovalTransaction;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,14 +15,21 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_approval_setup", schema = "approval")
-public class ApprovalSetup {
+@Table(name = "mst_function", schema = "auth")
+public class Function {
     @Id
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "name", nullable = false, length = 30)
-    private String setupName;
+    @Column(name = "parent_id", nullable = false)
+    private UUID parentId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @Column(name = "name", nullable = false, length = 50)
+    private String functionName;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
@@ -43,17 +52,24 @@ public class ApprovalSetup {
     @Column(name = "last_version_at", nullable = false)
     private Instant lastVersionAt;
 
+    @ColumnDefault("1")
+    @Column(name = "is_active", nullable = false)
+    private Short isActive;
+
     @ColumnDefault("0")
     @Column(name = "is_deleted", nullable = false)
     private Short isDeleted;
 
-    @OneToMany(mappedBy = "approvalSetup")
+    @OneToMany(mappedBy = "function")
     private Set<ApprovalFunction> approvalFunctions = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "approvalSetup")
-    private Set<ApprovalLevel> approvalLevels = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "approvalSetup")
+    @OneToMany(mappedBy = "function")
     private Set<ApprovalTransaction> approvalTransactions = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "function")
+    private Set<GroupFunctionPermission> groupFunctionPermissions = new LinkedHashSet<>();
+
+    @Column(name = "code", nullable = false, length = 30)
+    private String code;
 
 }
