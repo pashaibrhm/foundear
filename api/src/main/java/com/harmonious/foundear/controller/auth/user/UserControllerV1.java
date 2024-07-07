@@ -33,7 +33,7 @@ public class UserControllerV1 {
         try {
             Optional<UserDto> user = userService.getUserById(userId);
 
-            if(user.isPresent()){
+            if (user.isPresent()) {
                 return new ResponseEntity<>(user, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -61,12 +61,16 @@ public class UserControllerV1 {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
-        Optional<UserDto> userOptional = userService.getUserById(userId);
+        Optional<UserDto> existingUserOptional = userService.getUserById(userId);
 
-        if(userOptional.isPresent()) {
+        if (existingUserOptional.isPresent()) {
             try {
-                userService.softDeleteUser(userId);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                Optional<UserDto> deletedUserOptional = userService.softDeleteUser(userId);
+                if (deletedUserOptional.isPresent()) {
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
             } catch (RuntimeException e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }

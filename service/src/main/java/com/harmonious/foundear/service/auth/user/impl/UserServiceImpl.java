@@ -109,8 +109,7 @@ public class UserServiceImpl implements UserService {
                         return new NoSuchElementException("User with ID " + userId + " not found.");
                     })).map(userMapper::toDto);
         } catch (NoSuchElementException e) {
-            // Optionally handle the exception or rethrow
-            return Optional.empty(); // Or rethrow if preferred
+            return Optional.empty();
         }
     }
 }
