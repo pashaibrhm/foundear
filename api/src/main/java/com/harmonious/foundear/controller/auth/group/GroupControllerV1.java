@@ -61,12 +61,16 @@ public class GroupControllerV1 {
 
     @DeleteMapping("/{groupId}")
     public ResponseEntity<Optional<GroupDto>> deleteGroup(@PathVariable UUID groupId) {
-        Optional<GroupDto> groupOptional = groupService.getGroupById(groupId);
+        Optional<GroupDto> existingGroupOptional = groupService.getGroupById(groupId);
 
-        if (groupOptional.isPresent()) {
+        if (existingGroupOptional.isPresent()) {
             try {
-                groupService.deleteGroup(groupId);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                Optional<GroupDto> deletedGroupOptional = groupService.softDeleteGroup(groupId);
+                if (deletedGroupOptional.isPresent()) {
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
             } catch (RuntimeException e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
