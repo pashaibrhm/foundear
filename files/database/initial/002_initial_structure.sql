@@ -5,7 +5,7 @@
 -- Dumped from database version 16.6 (Debian 16.6-1.pgdg120+1)
 -- Dumped by pg_dump version 17.1
 
--- Started on 2025-01-11 13:13:22
+-- Started on 2025-01-11 14:27:46
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,7 +20,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 3546 (class 1262 OID 16384)
+-- TOC entry 3553 (class 1262 OID 16384)
 -- Name: foundear; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -52,6 +52,16 @@ CREATE SCHEMA approval;
 
 
 ALTER SCHEMA approval OWNER TO postgres;
+
+--
+-- TOC entry 11 (class 2615 OID 17066)
+-- Name: audit; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA audit;
+
+
+ALTER SCHEMA audit OWNER TO postgres;
 
 --
 -- TOC entry 6 (class 2615 OID 16389)
@@ -94,7 +104,7 @@ CREATE SCHEMA public;
 ALTER SCHEMA public OWNER TO pg_database_owner;
 
 --
--- TOC entry 3547 (class 0 OID 0)
+-- TOC entry 3554 (class 0 OID 0)
 -- Dependencies: 4
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: pg_database_owner
 --
@@ -117,7 +127,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 220 (class 1259 OID 16753)
+-- TOC entry 221 (class 1259 OID 16753)
 -- Name: mst_approval_functions; Type: TABLE; Schema: approval; Owner: postgres
 --
 
@@ -139,7 +149,7 @@ CREATE TABLE approval.mst_approval_functions (
 ALTER TABLE approval.mst_approval_functions OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 16759)
+-- TOC entry 222 (class 1259 OID 16759)
 -- Name: mst_approval_level_approvers; Type: TABLE; Schema: approval; Owner: postgres
 --
 
@@ -163,7 +173,7 @@ CREATE TABLE approval.mst_approval_level_approvers (
 ALTER TABLE approval.mst_approval_level_approvers OWNER TO postgres;
 
 --
--- TOC entry 222 (class 1259 OID 16766)
+-- TOC entry 223 (class 1259 OID 16766)
 -- Name: mst_approval_levels; Type: TABLE; Schema: approval; Owner: postgres
 --
 
@@ -188,8 +198,8 @@ CREATE TABLE approval.mst_approval_levels (
 ALTER TABLE approval.mst_approval_levels OWNER TO postgres;
 
 --
--- TOC entry 3548 (class 0 OID 0)
--- Dependencies: 222
+-- TOC entry 3555 (class 0 OID 0)
+-- Dependencies: 223
 -- Name: COLUMN mst_approval_levels.approver_domain; Type: COMMENT; Schema: approval; Owner: postgres
 --
 
@@ -197,7 +207,7 @@ COMMENT ON COLUMN approval.mst_approval_levels.approver_domain IS 'Refer to mst_
 
 
 --
--- TOC entry 223 (class 1259 OID 16772)
+-- TOC entry 224 (class 1259 OID 16772)
 -- Name: mst_approval_setups; Type: TABLE; Schema: approval; Owner: postgres
 --
 
@@ -218,7 +228,7 @@ CREATE TABLE approval.mst_approval_setups (
 ALTER TABLE approval.mst_approval_setups OWNER TO postgres;
 
 --
--- TOC entry 242 (class 1259 OID 16895)
+-- TOC entry 243 (class 1259 OID 16895)
 -- Name: trx_approval_transactions; Type: TABLE; Schema: approval; Owner: postgres
 --
 
@@ -241,7 +251,30 @@ CREATE TABLE approval.trx_approval_transactions (
 ALTER TABLE approval.trx_approval_transactions OWNER TO postgres;
 
 --
--- TOC entry 229 (class 1259 OID 16808)
+-- TOC entry 244 (class 1259 OID 17067)
+-- Name: audit_log; Type: TABLE; Schema: audit; Owner: postgres
+--
+
+CREATE TABLE audit.audit_log (
+    id uuid NOT NULL,
+    action_type character varying(10) NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_name character varying(100) NOT NULL,
+    old_data jsonb NOT NULL,
+    new_data jsonb,
+    performer_id uuid NOT NULL,
+    performer_username character varying(100) NOT NULL,
+    performed_at timestamp without time zone NOT NULL,
+    ip_address character varying(255) NOT NULL,
+    user_agent character varying(255) NOT NULL,
+    additional_context jsonb
+);
+
+
+ALTER TABLE audit.audit_log OWNER TO postgres;
+
+--
+-- TOC entry 230 (class 1259 OID 16808)
 -- Name: mst_failed_login_attempts; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -257,7 +290,7 @@ CREATE TABLE auth.mst_failed_login_attempts (
 ALTER TABLE auth.mst_failed_login_attempts OWNER TO postgres;
 
 --
--- TOC entry 231 (class 1259 OID 16823)
+-- TOC entry 232 (class 1259 OID 16823)
 -- Name: mst_functions; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -282,7 +315,7 @@ CREATE TABLE auth.mst_functions (
 ALTER TABLE auth.mst_functions OWNER TO postgres;
 
 --
--- TOC entry 232 (class 1259 OID 16830)
+-- TOC entry 233 (class 1259 OID 16830)
 -- Name: mst_group_function_permissions; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -296,7 +329,7 @@ CREATE TABLE auth.mst_group_function_permissions (
 ALTER TABLE auth.mst_group_function_permissions OWNER TO postgres;
 
 --
--- TOC entry 233 (class 1259 OID 16835)
+-- TOC entry 234 (class 1259 OID 16835)
 -- Name: mst_groups; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -319,7 +352,7 @@ CREATE TABLE auth.mst_groups (
 ALTER TABLE auth.mst_groups OWNER TO postgres;
 
 --
--- TOC entry 236 (class 1259 OID 16853)
+-- TOC entry 237 (class 1259 OID 16853)
 -- Name: mst_menus; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -344,7 +377,7 @@ CREATE TABLE auth.mst_menus (
 ALTER TABLE auth.mst_menus OWNER TO postgres;
 
 --
--- TOC entry 237 (class 1259 OID 16860)
+-- TOC entry 238 (class 1259 OID 16860)
 -- Name: mst_organizations; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -366,7 +399,7 @@ CREATE TABLE auth.mst_organizations (
 ALTER TABLE auth.mst_organizations OWNER TO postgres;
 
 --
--- TOC entry 239 (class 1259 OID 16872)
+-- TOC entry 240 (class 1259 OID 16872)
 -- Name: mst_user_sessions; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -383,8 +416,8 @@ CREATE TABLE auth.mst_user_sessions (
 ALTER TABLE auth.mst_user_sessions OWNER TO postgres;
 
 --
--- TOC entry 3549 (class 0 OID 0)
--- Dependencies: 239
+-- TOC entry 3556 (class 0 OID 0)
+-- Dependencies: 240
 -- Name: COLUMN mst_user_sessions.user_agent; Type: COMMENT; Schema: auth; Owner: postgres
 --
 
@@ -392,7 +425,7 @@ COMMENT ON COLUMN auth.mst_user_sessions.user_agent IS 'Browser or Device used b
 
 
 --
--- TOC entry 240 (class 1259 OID 16879)
+-- TOC entry 241 (class 1259 OID 16879)
 -- Name: mst_users; Type: TABLE; Schema: auth; Owner: postgres
 --
 
@@ -427,7 +460,7 @@ CREATE TABLE auth.mst_users (
 ALTER TABLE auth.mst_users OWNER TO postgres;
 
 --
--- TOC entry 228 (class 1259 OID 16802)
+-- TOC entry 229 (class 1259 OID 16802)
 -- Name: mst_entity_files; Type: TABLE; Schema: foundear; Owner: postgres
 --
 
@@ -447,8 +480,8 @@ CREATE TABLE foundear.mst_entity_files (
 ALTER TABLE foundear.mst_entity_files OWNER TO postgres;
 
 --
--- TOC entry 3550 (class 0 OID 0)
--- Dependencies: 228
+-- TOC entry 3557 (class 0 OID 0)
+-- Dependencies: 229
 -- Name: COLUMN mst_entity_files.entity_id; Type: COMMENT; Schema: foundear; Owner: postgres
 --
 
@@ -456,7 +489,7 @@ COMMENT ON COLUMN foundear.mst_entity_files.entity_id IS 'Could be refer to User
 
 
 --
--- TOC entry 230 (class 1259 OID 16815)
+-- TOC entry 231 (class 1259 OID 16815)
 -- Name: mst_files; Type: TABLE; Schema: foundear; Owner: postgres
 --
 
@@ -475,7 +508,7 @@ CREATE TABLE foundear.mst_files (
 ALTER TABLE foundear.mst_files OWNER TO postgres;
 
 --
--- TOC entry 234 (class 1259 OID 16841)
+-- TOC entry 235 (class 1259 OID 16841)
 -- Name: mst_lookup_details; Type: TABLE; Schema: lookup; Owner: postgres
 --
 
@@ -499,7 +532,7 @@ CREATE TABLE lookup.mst_lookup_details (
 ALTER TABLE lookup.mst_lookup_details OWNER TO postgres;
 
 --
--- TOC entry 235 (class 1259 OID 16847)
+-- TOC entry 236 (class 1259 OID 16847)
 -- Name: mst_lookup_headers; Type: TABLE; Schema: lookup; Owner: postgres
 --
 
@@ -522,7 +555,7 @@ CREATE TABLE lookup.mst_lookup_headers (
 ALTER TABLE lookup.mst_lookup_headers OWNER TO postgres;
 
 --
--- TOC entry 224 (class 1259 OID 16778)
+-- TOC entry 225 (class 1259 OID 16778)
 -- Name: mst_branches; Type: TABLE; Schema: regional; Owner: postgres
 --
 
@@ -556,7 +589,7 @@ CREATE TABLE regional.mst_branches (
 ALTER TABLE regional.mst_branches OWNER TO postgres;
 
 --
--- TOC entry 225 (class 1259 OID 16784)
+-- TOC entry 226 (class 1259 OID 16784)
 -- Name: mst_cities; Type: TABLE; Schema: regional; Owner: postgres
 --
 
@@ -580,7 +613,7 @@ CREATE TABLE regional.mst_cities (
 ALTER TABLE regional.mst_cities OWNER TO postgres;
 
 --
--- TOC entry 226 (class 1259 OID 16790)
+-- TOC entry 227 (class 1259 OID 16790)
 -- Name: mst_countries; Type: TABLE; Schema: regional; Owner: postgres
 --
 
@@ -603,7 +636,7 @@ CREATE TABLE regional.mst_countries (
 ALTER TABLE regional.mst_countries OWNER TO postgres;
 
 --
--- TOC entry 227 (class 1259 OID 16796)
+-- TOC entry 228 (class 1259 OID 16796)
 -- Name: mst_districts; Type: TABLE; Schema: regional; Owner: postgres
 --
 
@@ -627,7 +660,7 @@ CREATE TABLE regional.mst_districts (
 ALTER TABLE regional.mst_districts OWNER TO postgres;
 
 --
--- TOC entry 238 (class 1259 OID 16866)
+-- TOC entry 239 (class 1259 OID 16866)
 -- Name: mst_provinces; Type: TABLE; Schema: regional; Owner: postgres
 --
 
@@ -651,7 +684,7 @@ CREATE TABLE regional.mst_provinces (
 ALTER TABLE regional.mst_provinces OWNER TO postgres;
 
 --
--- TOC entry 241 (class 1259 OID 16889)
+-- TOC entry 242 (class 1259 OID 16889)
 -- Name: mst_villages; Type: TABLE; Schema: regional; Owner: postgres
 --
 
@@ -675,7 +708,7 @@ CREATE TABLE regional.mst_villages (
 ALTER TABLE regional.mst_villages OWNER TO postgres;
 
 --
--- TOC entry 3320 (class 2606 OID 16758)
+-- TOC entry 3325 (class 2606 OID 16758)
 -- Name: mst_approval_functions PK_MstApprovalFunction_Id; Type: CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -684,7 +717,7 @@ ALTER TABLE ONLY approval.mst_approval_functions
 
 
 --
--- TOC entry 3322 (class 2606 OID 16765)
+-- TOC entry 3327 (class 2606 OID 16765)
 -- Name: mst_approval_level_approvers PK_MstApprovalLevelApprover_Id; Type: CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -693,7 +726,7 @@ ALTER TABLE ONLY approval.mst_approval_level_approvers
 
 
 --
--- TOC entry 3324 (class 2606 OID 16771)
+-- TOC entry 3329 (class 2606 OID 16771)
 -- Name: mst_approval_levels PK_MstApprovalLevel_Id; Type: CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -702,7 +735,7 @@ ALTER TABLE ONLY approval.mst_approval_levels
 
 
 --
--- TOC entry 3326 (class 2606 OID 16777)
+-- TOC entry 3331 (class 2606 OID 16777)
 -- Name: mst_approval_setups PK_MstApprovalSetup_Id; Type: CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -711,7 +744,7 @@ ALTER TABLE ONLY approval.mst_approval_setups
 
 
 --
--- TOC entry 3364 (class 2606 OID 16899)
+-- TOC entry 3369 (class 2606 OID 16899)
 -- Name: trx_approval_transactions PK_TrxApprovalTransaction_Id; Type: CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -720,7 +753,16 @@ ALTER TABLE ONLY approval.trx_approval_transactions
 
 
 --
--- TOC entry 3338 (class 2606 OID 16814)
+-- TOC entry 3371 (class 2606 OID 17073)
+-- Name: audit_log audit_log_pkey; Type: CONSTRAINT; Schema: audit; Owner: postgres
+--
+
+ALTER TABLE ONLY audit.audit_log
+    ADD CONSTRAINT audit_log_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3343 (class 2606 OID 16814)
 -- Name: mst_failed_login_attempts PK_MstFailedLoginAttempt_Id; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -729,7 +771,7 @@ ALTER TABLE ONLY auth.mst_failed_login_attempts
 
 
 --
--- TOC entry 3342 (class 2606 OID 16829)
+-- TOC entry 3347 (class 2606 OID 16829)
 -- Name: mst_functions PK_MstFunction_Id; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -738,7 +780,7 @@ ALTER TABLE ONLY auth.mst_functions
 
 
 --
--- TOC entry 3344 (class 2606 OID 16834)
+-- TOC entry 3349 (class 2606 OID 16834)
 -- Name: mst_group_function_permissions PK_MstGroupFunctionPermission_Id; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -747,7 +789,7 @@ ALTER TABLE ONLY auth.mst_group_function_permissions
 
 
 --
--- TOC entry 3346 (class 2606 OID 16840)
+-- TOC entry 3351 (class 2606 OID 16840)
 -- Name: mst_groups PK_MstGroup_Id; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -756,7 +798,7 @@ ALTER TABLE ONLY auth.mst_groups
 
 
 --
--- TOC entry 3352 (class 2606 OID 16859)
+-- TOC entry 3357 (class 2606 OID 16859)
 -- Name: mst_menus PK_MstMenu_Id; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -765,7 +807,7 @@ ALTER TABLE ONLY auth.mst_menus
 
 
 --
--- TOC entry 3354 (class 2606 OID 16865)
+-- TOC entry 3359 (class 2606 OID 16865)
 -- Name: mst_organizations PK_MstOrganization_Id; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -774,7 +816,7 @@ ALTER TABLE ONLY auth.mst_organizations
 
 
 --
--- TOC entry 3358 (class 2606 OID 16878)
+-- TOC entry 3363 (class 2606 OID 16878)
 -- Name: mst_user_sessions PK_MstUserSession_Id; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -783,7 +825,7 @@ ALTER TABLE ONLY auth.mst_user_sessions
 
 
 --
--- TOC entry 3360 (class 2606 OID 16888)
+-- TOC entry 3365 (class 2606 OID 16888)
 -- Name: mst_users PK_MstUser_Id; Type: CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -792,7 +834,7 @@ ALTER TABLE ONLY auth.mst_users
 
 
 --
--- TOC entry 3336 (class 2606 OID 16807)
+-- TOC entry 3341 (class 2606 OID 16807)
 -- Name: mst_entity_files PK_MstEntityFile_Id; Type: CONSTRAINT; Schema: foundear; Owner: postgres
 --
 
@@ -801,7 +843,7 @@ ALTER TABLE ONLY foundear.mst_entity_files
 
 
 --
--- TOC entry 3340 (class 2606 OID 16822)
+-- TOC entry 3345 (class 2606 OID 16822)
 -- Name: mst_files PK_MstFile_Id; Type: CONSTRAINT; Schema: foundear; Owner: postgres
 --
 
@@ -810,7 +852,7 @@ ALTER TABLE ONLY foundear.mst_files
 
 
 --
--- TOC entry 3348 (class 2606 OID 16846)
+-- TOC entry 3353 (class 2606 OID 16846)
 -- Name: mst_lookup_details PK_MstLookupDetail_Id; Type: CONSTRAINT; Schema: lookup; Owner: postgres
 --
 
@@ -819,7 +861,7 @@ ALTER TABLE ONLY lookup.mst_lookup_details
 
 
 --
--- TOC entry 3350 (class 2606 OID 16852)
+-- TOC entry 3355 (class 2606 OID 16852)
 -- Name: mst_lookup_headers PK_MstLookupHeader_Id; Type: CONSTRAINT; Schema: lookup; Owner: postgres
 --
 
@@ -828,7 +870,7 @@ ALTER TABLE ONLY lookup.mst_lookup_headers
 
 
 --
--- TOC entry 3328 (class 2606 OID 16783)
+-- TOC entry 3333 (class 2606 OID 16783)
 -- Name: mst_branches PK_MstBranch_Id; Type: CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -837,7 +879,7 @@ ALTER TABLE ONLY regional.mst_branches
 
 
 --
--- TOC entry 3330 (class 2606 OID 16789)
+-- TOC entry 3335 (class 2606 OID 16789)
 -- Name: mst_cities PK_MstCity_Id; Type: CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -846,7 +888,7 @@ ALTER TABLE ONLY regional.mst_cities
 
 
 --
--- TOC entry 3332 (class 2606 OID 16795)
+-- TOC entry 3337 (class 2606 OID 16795)
 -- Name: mst_countries PK_MstCountry_Id; Type: CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -855,7 +897,7 @@ ALTER TABLE ONLY regional.mst_countries
 
 
 --
--- TOC entry 3334 (class 2606 OID 16801)
+-- TOC entry 3339 (class 2606 OID 16801)
 -- Name: mst_districts PK_MstDistrict_Id; Type: CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -864,7 +906,7 @@ ALTER TABLE ONLY regional.mst_districts
 
 
 --
--- TOC entry 3356 (class 2606 OID 16871)
+-- TOC entry 3361 (class 2606 OID 16871)
 -- Name: mst_provinces PK_MstProvince_Id; Type: CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -873,7 +915,7 @@ ALTER TABLE ONLY regional.mst_provinces
 
 
 --
--- TOC entry 3362 (class 2606 OID 16894)
+-- TOC entry 3367 (class 2606 OID 16894)
 -- Name: mst_villages PK_MstVillage_Id; Type: CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -882,7 +924,7 @@ ALTER TABLE ONLY regional.mst_villages
 
 
 --
--- TOC entry 3365 (class 2606 OID 16900)
+-- TOC entry 3372 (class 2606 OID 16900)
 -- Name: mst_approval_functions FK_MstApprovalFunction_ApprovalSetupId_MstApprovalSetup_Id; Type: FK CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -891,7 +933,7 @@ ALTER TABLE ONLY approval.mst_approval_functions
 
 
 --
--- TOC entry 3366 (class 2606 OID 16905)
+-- TOC entry 3373 (class 2606 OID 16905)
 -- Name: mst_approval_functions FK_MstApprovalFunction_FunctionId_MstFunction_Id; Type: FK CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -900,7 +942,7 @@ ALTER TABLE ONLY approval.mst_approval_functions
 
 
 --
--- TOC entry 3367 (class 2606 OID 16910)
+-- TOC entry 3374 (class 2606 OID 16910)
 -- Name: mst_approval_level_approvers FK_MstApprovalLevelApprover_ApprovalSetupId_MstApprovalSetup_Id; Type: FK CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -909,7 +951,7 @@ ALTER TABLE ONLY approval.mst_approval_level_approvers
 
 
 --
--- TOC entry 3368 (class 2606 OID 16920)
+-- TOC entry 3375 (class 2606 OID 16920)
 -- Name: mst_approval_levels FK_MstApprovalLevel_ApproverDomain_MstBranch_Id; Type: FK CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -918,7 +960,7 @@ ALTER TABLE ONLY approval.mst_approval_levels
 
 
 --
--- TOC entry 3369 (class 2606 OID 16915)
+-- TOC entry 3376 (class 2606 OID 16915)
 -- Name: mst_approval_levels FK_MstApprovalLevel_Id_MstApprovalSetup_Id; Type: FK CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -927,7 +969,7 @@ ALTER TABLE ONLY approval.mst_approval_levels
 
 
 --
--- TOC entry 3396 (class 2606 OID 17055)
+-- TOC entry 3403 (class 2606 OID 17055)
 -- Name: trx_approval_transactions FK_TrxApprovalTransaction_ApprovalSetupId_MstApprovalSetup_Id; Type: FK CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -936,7 +978,7 @@ ALTER TABLE ONLY approval.trx_approval_transactions
 
 
 --
--- TOC entry 3397 (class 2606 OID 17060)
+-- TOC entry 3404 (class 2606 OID 17060)
 -- Name: trx_approval_transactions FK_TrxApprovalTransaction_FunctionId_MstFunction_Id; Type: FK CONSTRAINT; Schema: approval; Owner: postgres
 --
 
@@ -945,7 +987,7 @@ ALTER TABLE ONLY approval.trx_approval_transactions
 
 
 --
--- TOC entry 3382 (class 2606 OID 16985)
+-- TOC entry 3389 (class 2606 OID 16985)
 -- Name: mst_functions FK_MstFunction_MenuId_MstMenu_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -954,7 +996,7 @@ ALTER TABLE ONLY auth.mst_functions
 
 
 --
--- TOC entry 3383 (class 2606 OID 16990)
+-- TOC entry 3390 (class 2606 OID 16990)
 -- Name: mst_group_function_permissions FK_MstGroupFunctionPermission_FunctionId_MstFunction_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -963,7 +1005,7 @@ ALTER TABLE ONLY auth.mst_group_function_permissions
 
 
 --
--- TOC entry 3384 (class 2606 OID 16995)
+-- TOC entry 3391 (class 2606 OID 16995)
 -- Name: mst_group_function_permissions FK_MstGroupFunctionPermission_GroupId_MstGroup_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -972,7 +1014,7 @@ ALTER TABLE ONLY auth.mst_group_function_permissions
 
 
 --
--- TOC entry 3385 (class 2606 OID 17000)
+-- TOC entry 3392 (class 2606 OID 17000)
 -- Name: mst_groups FK_MstGroup_OrgId_MstOrganization_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -981,7 +1023,7 @@ ALTER TABLE ONLY auth.mst_groups
 
 
 --
--- TOC entry 3381 (class 2606 OID 16980)
+-- TOC entry 3388 (class 2606 OID 16980)
 -- Name: mst_failed_login_attempts FK_MstUserLoginAttempt_UserId_MstUser_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -990,7 +1032,7 @@ ALTER TABLE ONLY auth.mst_failed_login_attempts
 
 
 --
--- TOC entry 3388 (class 2606 OID 17015)
+-- TOC entry 3395 (class 2606 OID 17015)
 -- Name: mst_user_sessions FK_MstUserSession_UserId_MstUser_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -999,7 +1041,7 @@ ALTER TABLE ONLY auth.mst_user_sessions
 
 
 --
--- TOC entry 3389 (class 2606 OID 17035)
+-- TOC entry 3396 (class 2606 OID 17035)
 -- Name: mst_users FK_MstUser_CityId_MstCity_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -1008,7 +1050,7 @@ ALTER TABLE ONLY auth.mst_users
 
 
 --
--- TOC entry 3390 (class 2606 OID 17045)
+-- TOC entry 3397 (class 2606 OID 17045)
 -- Name: mst_users FK_MstUser_CountryId_MstCountry_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -1017,7 +1059,7 @@ ALTER TABLE ONLY auth.mst_users
 
 
 --
--- TOC entry 3391 (class 2606 OID 17030)
+-- TOC entry 3398 (class 2606 OID 17030)
 -- Name: mst_users FK_MstUser_DistrictId_MstDistrict_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -1026,7 +1068,7 @@ ALTER TABLE ONLY auth.mst_users
 
 
 --
--- TOC entry 3392 (class 2606 OID 17020)
+-- TOC entry 3399 (class 2606 OID 17020)
 -- Name: mst_users FK_MstUser_GroupId_MstGroup_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -1035,7 +1077,7 @@ ALTER TABLE ONLY auth.mst_users
 
 
 --
--- TOC entry 3393 (class 2606 OID 17040)
+-- TOC entry 3400 (class 2606 OID 17040)
 -- Name: mst_users FK_MstUser_ProvinceId_MstProvince_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -1044,7 +1086,7 @@ ALTER TABLE ONLY auth.mst_users
 
 
 --
--- TOC entry 3394 (class 2606 OID 17025)
+-- TOC entry 3401 (class 2606 OID 17025)
 -- Name: mst_users FK_MstUser_VillageId_MstVillage_Id; Type: FK CONSTRAINT; Schema: auth; Owner: postgres
 --
 
@@ -1053,7 +1095,7 @@ ALTER TABLE ONLY auth.mst_users
 
 
 --
--- TOC entry 3379 (class 2606 OID 16970)
+-- TOC entry 3386 (class 2606 OID 16970)
 -- Name: mst_entity_files FK_MstEntityFile_FileId_MstFile_Id; Type: FK CONSTRAINT; Schema: foundear; Owner: postgres
 --
 
@@ -1062,7 +1104,7 @@ ALTER TABLE ONLY foundear.mst_entity_files
 
 
 --
--- TOC entry 3380 (class 2606 OID 16975)
+-- TOC entry 3387 (class 2606 OID 16975)
 -- Name: mst_entity_files FK_MstEntityFile_LookupEntityType_MstLookupDetail_Id; Type: FK CONSTRAINT; Schema: foundear; Owner: postgres
 --
 
@@ -1071,7 +1113,7 @@ ALTER TABLE ONLY foundear.mst_entity_files
 
 
 --
--- TOC entry 3386 (class 2606 OID 17005)
+-- TOC entry 3393 (class 2606 OID 17005)
 -- Name: mst_lookup_details FK_MstLookupDetail_LookupHeaderId_MstLookupHeader_Id; Type: FK CONSTRAINT; Schema: lookup; Owner: postgres
 --
 
@@ -1080,7 +1122,7 @@ ALTER TABLE ONLY lookup.mst_lookup_details
 
 
 --
--- TOC entry 3370 (class 2606 OID 16955)
+-- TOC entry 3377 (class 2606 OID 16955)
 -- Name: mst_branches FK_MstBranch_BranchType_MstLookupDetail_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1089,7 +1131,7 @@ ALTER TABLE ONLY regional.mst_branches
 
 
 --
--- TOC entry 3371 (class 2606 OID 16935)
+-- TOC entry 3378 (class 2606 OID 16935)
 -- Name: mst_branches FK_MstBranch_CityId_MstCity_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1098,7 +1140,7 @@ ALTER TABLE ONLY regional.mst_branches
 
 
 --
--- TOC entry 3372 (class 2606 OID 16945)
+-- TOC entry 3379 (class 2606 OID 16945)
 -- Name: mst_branches FK_MstBranch_CountryId_MstCountry_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1107,7 +1149,7 @@ ALTER TABLE ONLY regional.mst_branches
 
 
 --
--- TOC entry 3373 (class 2606 OID 16930)
+-- TOC entry 3380 (class 2606 OID 16930)
 -- Name: mst_branches FK_MstBranch_DistrictId_MstDistrict_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1116,7 +1158,7 @@ ALTER TABLE ONLY regional.mst_branches
 
 
 --
--- TOC entry 3374 (class 2606 OID 16950)
+-- TOC entry 3381 (class 2606 OID 16950)
 -- Name: mst_branches FK_MstBranch_EntityType_MstLookupDetail_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1125,7 +1167,7 @@ ALTER TABLE ONLY regional.mst_branches
 
 
 --
--- TOC entry 3375 (class 2606 OID 16940)
+-- TOC entry 3382 (class 2606 OID 16940)
 -- Name: mst_branches FK_MstBranch_ProvinceId_MstProvince_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1134,7 +1176,7 @@ ALTER TABLE ONLY regional.mst_branches
 
 
 --
--- TOC entry 3376 (class 2606 OID 16925)
+-- TOC entry 3383 (class 2606 OID 16925)
 -- Name: mst_branches FK_MstBranch_VillageId_MstVillage_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1143,7 +1185,7 @@ ALTER TABLE ONLY regional.mst_branches
 
 
 --
--- TOC entry 3377 (class 2606 OID 16960)
+-- TOC entry 3384 (class 2606 OID 16960)
 -- Name: mst_cities FK_MstCity_ProvinceId_MstProvince_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1152,7 +1194,7 @@ ALTER TABLE ONLY regional.mst_cities
 
 
 --
--- TOC entry 3378 (class 2606 OID 16965)
+-- TOC entry 3385 (class 2606 OID 16965)
 -- Name: mst_districts FK_MstDistrict_CityId_MstCity_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1161,7 +1203,7 @@ ALTER TABLE ONLY regional.mst_districts
 
 
 --
--- TOC entry 3387 (class 2606 OID 17010)
+-- TOC entry 3394 (class 2606 OID 17010)
 -- Name: mst_provinces FK_MstProvince_CountryId_MstCountry_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1170,7 +1212,7 @@ ALTER TABLE ONLY regional.mst_provinces
 
 
 --
--- TOC entry 3395 (class 2606 OID 17050)
+-- TOC entry 3402 (class 2606 OID 17050)
 -- Name: mst_villages FK_MstVillage_DistrictId_MstDistrict_Id; Type: FK CONSTRAINT; Schema: regional; Owner: postgres
 --
 
@@ -1178,7 +1220,7 @@ ALTER TABLE ONLY regional.mst_villages
     ADD CONSTRAINT "FK_MstVillage_DistrictId_MstDistrict_Id" FOREIGN KEY (district_id) REFERENCES regional.mst_districts(id);
 
 
--- Completed on 2025-01-11 13:13:22
+-- Completed on 2025-01-11 14:27:47
 
 --
 -- PostgreSQL database dump complete
