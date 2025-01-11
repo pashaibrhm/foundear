@@ -7,6 +7,7 @@ import com.harmonious.foundear.repository.auth.organization.OrganizationReposito
 import com.harmonious.foundear.service.auth.organization.OrganizationService;
 import lombok.Getter;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +21,11 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationMapper organizationMapper;
 
-    private final Logger logger;
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationServiceImpl.class);
 
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper, Logger logger) {
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
-        this.logger = logger;
     }
 
     private void logInfo(UUID organizationId) {
