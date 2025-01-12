@@ -10,7 +10,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-@Table(name = "mst_failed_login_attempt", schema = "auth")
+@Table(name = "mst_failed_login_attempts", schema = "auth")
 public class FailedLoginAttempt {
     @Id
     @Column(name = "id", nullable = false)

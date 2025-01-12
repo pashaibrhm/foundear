@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_lookup_header", schema = "lookup")
+@Table(name = "mst_lookup_headers", schema = "lookup")
 public class LookupHeader {
     @Id
     @Column(name = "id", nullable = false)

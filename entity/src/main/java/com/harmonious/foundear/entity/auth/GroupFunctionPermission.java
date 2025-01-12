@@ -9,7 +9,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_group_function_permission", schema = "auth")
+@Table(name = "mst_group_function_permissions", schema = "auth")
 public class GroupFunctionPermission {
     @Id
     @Column(name = "id", nullable = false)

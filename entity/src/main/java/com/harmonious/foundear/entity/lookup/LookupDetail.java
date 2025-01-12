@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_lookup_detail", schema = "lookup")
+@Table(name = "mst_lookup_details", schema = "lookup")
 public class LookupDetail {
     @Id
     @Column(name = "id", nullable = false)

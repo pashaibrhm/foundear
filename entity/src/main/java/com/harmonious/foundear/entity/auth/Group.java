@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "mst_group", schema = "auth")
+@Table(name = "mst_groups", schema = "auth")
 public class Group {
     @Id
     @Column(name = "id", nullable = false)

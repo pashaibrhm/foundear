@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "mst_village", schema = "regional")
+@Table(name = "mst_villages", schema = "regional")
 public class Village {
     @Id
     @Column(name = "id", nullable = false)

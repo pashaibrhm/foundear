@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_entity_file", schema = "foundear")
+@Table(name = "mst_entity_files", schema = "foundear")
 public class EntityFile {
     @Id
     @Column(name = "id", nullable = false)

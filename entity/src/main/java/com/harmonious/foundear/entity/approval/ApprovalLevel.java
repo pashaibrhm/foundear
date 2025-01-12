@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_approval_level", schema = "approval")
+@Table(name = "mst_approval_levels", schema = "approval")
 public class ApprovalLevel {
     @Id
     @Column(name = "id", nullable = false)

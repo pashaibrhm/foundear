@@ -19,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "mst_user", schema = "auth")
+@Table(name = "mst_users", schema = "auth")
 public class User {
     @Id
     @GeneratedValue(generator = "custom-uuid")

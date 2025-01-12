@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_function", schema = "auth")
+@Table(name = "mst_functions", schema = "auth")
 public class Function {
     @Id
     @Column(name = "id", nullable = false)

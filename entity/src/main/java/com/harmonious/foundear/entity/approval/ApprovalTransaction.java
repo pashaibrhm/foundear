@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "trx_approval_transaction", schema = "approval")
+@Table(name = "trx_approval_transactions", schema = "approval")
 public class ApprovalTransaction {
     @Id
     @Column(name = "id", nullable = false)

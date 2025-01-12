@@ -10,7 +10,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-@Table(name = "mst_user_session", schema = "auth")
+@Table(name = "mst_user_sessions", schema = "auth")
 public class UserSession {
     @Id
     @Column(name = "id", nullable = false)

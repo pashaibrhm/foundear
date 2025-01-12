@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "mst_approval_function", schema = "approval")
+@Table(name = "mst_approval_functions", schema = "approval")
 public class ApprovalFunction {
     @Id
     @Column(name = "id", nullable = false)
