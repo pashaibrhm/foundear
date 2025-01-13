@@ -1,14 +1,16 @@
 package com.harmonious.foundear.controller.auth.user;
 
 import com.harmonious.foundear.dto.auth.user.UserDto;
+import com.harmonious.foundear.exception.ResourceNotFoundException;
+import com.harmonious.foundear.response.ApiResponse;
+import com.harmonious.foundear.response.ResponseUtil;
 import com.harmonious.foundear.service.auth.user.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -23,59 +25,35 @@ public class UserControllerV1 {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers() {
         List<UserDto> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        return ResponseUtil.success(200, "Users retrieved successfully.", users);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Optional<UserDto>> getUserById(@PathVariable UUID userId) {
-        try {
-            Optional<UserDto> user = userService.getUserById(userId);
-
-            if (user.isPresent()) {
-                return new ResponseEntity<>(user, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ApiResponse<UserDto>> getUserById(@PathVariable UUID userId) {
+        UserDto user = userService.getUserById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found", "userId", userId));
+        return ResponseUtil.success(200, "User retrieved successfully.", user);
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserDto userDto) {
         UserDto createdUser = userService.createUser(userDto);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return ResponseUtil.success(201, "User created successfully.", createdUser);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<Optional<UserDto>> updateUser(@PathVariable UUID userId, @RequestBody UserDto userDto) {
-        try {
-            Optional<UserDto> updatedUser = userService.updateUser(userId, userDto);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ApiResponse<UserDto>> updateUser(@PathVariable UUID userId, @Valid @RequestBody UserDto userDto) {
+        UserDto updatedUser = userService.updateUser(userId, userDto)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found", "userId", userId));
+        return ResponseUtil.success(200, "User updated successfully.", updatedUser);
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
-        Optional<UserDto> existingUserOptional = userService.getUserById(userId);
-
-        if (existingUserOptional.isPresent()) {
-            try {
-                Optional<UserDto> deletedUserOptional = userService.softDeleteUser(userId);
-                if (deletedUserOptional.isPresent()) {
-                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-                } else {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                }
-            } catch (RuntimeException e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ApiResponse<Object>> deleteUser(@PathVariable UUID userId) {
+        userService.softDeleteUser(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found or cannot be deleted", "userId", userId));
+        return ResponseUtil.success(204, "User deleted successfully.", null);
     }
 }

@@ -17,24 +17,39 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        return new ResponseEntity<>("handleRuntimeException - An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiResponse<Object>> handleRuntimeException(RuntimeException ex, WebRequest request) {
+        return ResponseUtil.error(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "An unexpected error occurred: " + ex.getMessage(),
+                Collections.singletonList(new ApiResponse.ErrorDetails("error", ex.getMessage()))
+        );
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        return new ResponseEntity<>("handleIllegalArgumentException - Invalid input: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        return ResponseUtil.error(
+                HttpStatus.BAD_REQUEST.value(),
+                "Invalid input: " + ex.getMessage(),
+                Collections.singletonList(new ApiResponse.ErrorDetails("invalidArgument", ex.getMessage()))
+        );
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        ApiResponse.ErrorDetails errorDetails = new ApiResponse.ErrorDetails(ex.getField(), ex.getMessage());
-        return ResponseUtil.error(404, ex.getMessage(), Collections.singletonList(errorDetails));
+        return ResponseUtil.error(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                Collections.singletonList(new ApiResponse.ErrorDetails(ex.getField(), ex.getMessage()))
+        );
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGenericException(Exception ex, WebRequest request) {
-        return new ResponseEntity<>("handleGenericException - An error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex, WebRequest request) {
+        return ResponseUtil.error(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "An error occurred: " + ex.getMessage(),
+                Collections.singletonList(new ApiResponse.ErrorDetails("error", ex.getMessage()))
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -43,6 +58,10 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(err -> new ApiResponse.ErrorDetails(err.getField(), err.getDefaultMessage()))
                 .collect(Collectors.toList());
-        return ResponseUtil.error(400, "Validation failed", errors);
+        return ResponseUtil.error(
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed",
+                errors
+        );
     }
 }
