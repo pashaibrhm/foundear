@@ -119,26 +119,39 @@ class UserServiceImplTest {
     void updateUser_shouldUpdateExistingUser() {
         // Arrange
         UUID userId = UUID.randomUUID();
+
+        // 1. Create input DTO
         UserDto userDto = UserDto.createDummyUserDto();
         userDto.setId(userId);
 
-        User existingUser = User.createDummyUser();
-        existingUser.setId(userId);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        // 2. Mock DTO -> Entity conversion
+        User convertedUser = User.createDummyUser();
+        convertedUser.setId(userId);
+        when(userMapper.toEntity(userDto)).thenReturn(convertedUser);
 
-        User updatedUser = User.createDummyUser();
-        updatedUser.setId(userId);
-        when(userRepository.save(Mockito.any(User.class))).thenReturn(updatedUser);
+        // 3. Mock repository responses
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.of(User.createDummyUser())); // Any existing user
+        when(userRepository.save(convertedUser))
+                .thenReturn(convertedUser); // Return the same converted user
 
-        UserDto expectedUserDto = userMapper.toDto(updatedUser);
-        when(userMapper.toDto(updatedUser)).thenReturn(expectedUserDto);
+        // 4. Mock Entity -> DTO conversion
+        UserDto expectedUserDto = UserDto.createDummyUserDto();
+        expectedUserDto.setId(userId);
+        when(userMapper.toDto(convertedUser)).thenReturn(expectedUserDto);
 
         // Act
-        Optional<UserDto> actualUserDto = userService.updateUser(userId, userDto);
+        Optional<UserDto> result = userService.updateUser(userId, userDto);
 
         // Assert
-        assertTrue(actualUserDto.isPresent());
-        assertEquals(expectedUserDto, actualUserDto.get());
+        assertTrue(result.isPresent());
+        assertEquals(expectedUserDto, result.get());
+
+        // Verify interactions
+        verify(userRepository).findById(userId);
+        verify(userRepository).save(convertedUser);
+        verify(userMapper).toEntity(userDto);
+        verify(userMapper).toDto(convertedUser);
     }
 
     @Test
