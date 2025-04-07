@@ -1,8 +1,8 @@
 package com.harmonious.foundear.controller.auth.user;
 
 import com.harmonious.foundear.dto.auth.user.UserDto;
-import com.harmonious.foundear.entity.regional.*;
-import com.harmonious.foundear.entity.auth.Group;
+import com.harmonious.foundear.exception.ResourceNotFoundException;
+import com.harmonious.foundear.response.ApiResponse;
 import com.harmonious.foundear.service.auth.user.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,12 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -49,152 +44,161 @@ class UserControllerV1Test {
         when(userService.getAllUsers()).thenReturn(users);
 
         // Act
-        ResponseEntity<List<UserDto>> response = userControllerV1.getAllUsers();
+        ResponseEntity<ApiResponse<List<UserDto>>> response = userControllerV1.getAllUsers();
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(users, response.getBody());
+        assertEquals(users, Objects.requireNonNull(response.getBody()).getData());
     }
 
     @Test
-    void getUserById_shouldReturnUserIfExists() {
+    void getUserById_shouldReturnUser_whenUserExists() { // Renamed slightly for clarity
         // Arrange
         UUID userId = UUID.randomUUID();
-        Optional<UserDto> user = Optional.of(new UserDto());
-        when(userService.getUserById(userId)).thenReturn(user);
+        // Create a specific UserDto instance to use for mocking AND assertion
+        UserDto expectedUserDto = new UserDto(/* maybe set some fields if needed */);
+        // Mock the service to return an Optional containing THIS specific instance
+        when(userService.getUserById(userId)).thenReturn(Optional.of(expectedUserDto));
 
         // Act
-        ResponseEntity<Optional<UserDto>> response = userControllerV1.getUserById(userId);
+        // *** Directly assign the result, as the controller returns ResponseEntity ***
+        ResponseEntity<ApiResponse<UserDto>> responseEntity = userControllerV1.getUserById(userId);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(user, response.getBody());
+        assertNotNull(responseEntity, "ResponseEntity should not be null");
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "HTTP Status should be OK");
+
+        ApiResponse<UserDto> responseBody = responseEntity.getBody();
+        assertNotNull(responseBody, "Response body should not be null");
+        // Optionally check the success message if your ResponseUtil/ApiResponse includes one
+        assertEquals("User retrieved successfully.", responseBody.getMessage(), "Response message should match");
+
+        // *** Directly compare the data in the body with the exact instance we expect ***
+        assertEquals(expectedUserDto, responseBody.getData(), "Response data should match the expected UserDto");
+
+        // Verify the service method was called
+        verify(userService, times(1)).getUserById(userId);
+        verifyNoMoreInteractions(userService); // Optional: ensure no other service methods were called
     }
 
     @Test
-    void getUserById_shouldReturnNotFoundIfUserDoesNotExist() {
+    void getUserById_shouldThrowResourceNotFoundException_whenUserDoesNotExist() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        when(userService.getUserById(userId)).thenReturn(Optional.empty());
+        String expectedMessage = String.format("User not found: userId [%s]", userId); // Match exception format
+        when(userService.getUserById(userId)).thenReturn(Optional.empty()); // Simulate user not found
 
-        // Act
-        ResponseEntity<Optional<UserDto>> response = userControllerV1.getUserById(userId);
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            // Call the method that is expected to throw
+            userControllerV1.getUserById(userId);
+        });
 
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody());
+        // Optionally, assert details about the exception
+        assertEquals(expectedMessage, exception.getMessage());
+        assertEquals("userId", exception.getField());
+
+        // Verify that the service method was indeed called
+        verify(userService, times(1)).getUserById(userId);
     }
 
     @Test
-    void createUser_shouldReturnCreatedStatus() {
+    void createUser_shouldReturnCreatedUserWith201Status() {
         // Arrange
-        UserDto userDto = new UserDto();
+        UserDto inputDto = new UserDto();
+        UserDto createdUser = new UserDto(); // You might want to set some fields
+        when(userService.createUser(inputDto)).thenReturn(createdUser);
 
         // Act
-        ResponseEntity<UserDto> response = userControllerV1.createUser(userDto);
+        ResponseEntity<ApiResponse<UserDto>> response = userControllerV1.createUser(inputDto);
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        ApiResponse<UserDto> body = response.getBody();
+        assertNotNull(body);
+        assertEquals("User created successfully.", body.getMessage());
+        assertEquals(createdUser, body.getData());
+        verify(userService).createUser(inputDto);
     }
 
     @Test
-    void updateUser_shouldReturnOkStatusIfUserExists() {
+    void updateUser_shouldReturnUpdatedUserWhenExists() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        UserDto userDto = new UserDto();
+        UserDto inputDto = new UserDto();
+        UserDto updatedUser = new UserDto();
+        when(userService.updateUser(userId, inputDto)).thenReturn(Optional.of(updatedUser));
 
         // Act
-        ResponseEntity<Optional<UserDto>> response = userControllerV1.updateUser(userId, userDto);
+        ResponseEntity<ApiResponse<UserDto>> response = userControllerV1.updateUser(userId, inputDto);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        ApiResponse<UserDto> body = response.getBody();
+        assertNotNull(body);
+        assertEquals("User updated successfully.", body.getMessage());
+        assertEquals(updatedUser, body.getData());
     }
 
     @Test
-    void updateUser_shouldReturnNotFoundIfUserDoesNotExist() {
+    void updateUser_shouldThrowNotFoundWhenUserMissing() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        UserDto userDto = new UserDto();
-        doThrow(new RuntimeException()).when(userService).updateUser(userId, userDto);
+        UserDto inputDto = new UserDto();
+        when(userService.updateUser(userId, inputDto)).thenReturn(Optional.empty());
 
-        // Act
-        ResponseEntity<Optional<UserDto>> response = userControllerV1.updateUser(userId, userDto);
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> {
+            userControllerV1.updateUser(userId, inputDto);
+        });
 
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(userService).updateUser(userId, inputDto);
     }
 
     @Test
-    void deleteUser_shouldReturnNoContentIfUserExists() {
+    void deleteUser_shouldReturnNoContentWhenSuccessful() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        UserDto userDto = UserDto.createDummyUserDto();
-        userDto.setId(userId);
-
-        when(userService.getUserById(userId)).thenReturn(Optional.of(userDto));
+        when(userService.softDeleteUser(userId)).thenReturn(Optional.of(new UserDto()));
 
         // Act
-        ResponseEntity<Void> response = userControllerV1.deleteUser(userId);
+        ResponseEntity<ApiResponse<Object>> response = userControllerV1.deleteUser(userId);
 
         // Assert
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(userService, times(1)).softDeleteUser(userId);
+        assertEquals("User deleted successfully.", response.getBody().getMessage());
+        verify(userService).softDeleteUser(userId);
     }
 
     @Test
-    void deleteUser_shouldReturnNotFoundIfUserDoesNotExist() {
+    void deleteUser_shouldThrowNotFoundWhenUserMissing() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        when(userService.getUserById(userId)).thenReturn(Optional.empty());
+        when(userService.softDeleteUser(userId)).thenReturn(Optional.empty());
 
-        // Act
-        ResponseEntity<Void> response = userControllerV1.deleteUser(userId);
-
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(userService, never()).softDeleteUser(userId);
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> {
+            userControllerV1.deleteUser(userId);
+        });
     }
 
     @Test
-    void deleteUser_shouldReturnInternalServerErrorOnException() {
+    void deleteUser_shouldReturn500OnServiceException() {
         // Arrange
         UUID userId = UUID.randomUUID();
-        UserDto userDto = UserDto.builder()
-                .id(userId)
-                .createdAt(Instant.now())
-                .createdBy(UUID.randomUUID())
-                .approvedBy(UUID.randomUUID())
-                .isDeleted((short) 0)
-                .city(new City())
-                .district(new District())
-                .village(new Village())
-                .country(new Country())
-                .approvedAt(Instant.now())
-                .province(new Province())
-                .group(new Group())
-                .firstName("John")
-                .middleName("A")
-                .lastName("Doe")
-                .username("johndoe")
-                .email("johndoe@example.com")
-                .password("securepassword")
-                .addressDetail("123 Main St")
-                .lastUpdatedBy(UUID.randomUUID())
-                .lastUpdatedAt(Instant.now())
-                .lastVersionAt(Instant.now())
-                .lockCount(BigDecimal.ZERO)
-                .isLocked((short) 0)
-                .failedLoginAttempts(new LinkedHashSet<>())
-                .userSessions(new LinkedHashSet<>())
-                .build();
-        when(userService.getUserById(userId)).thenReturn(Optional.of(userDto));
-        doThrow(new RuntimeException("Database error")).when(userService).softDeleteUser(userId);
 
-        // Act
-        ResponseEntity<Void> response = userControllerV1.deleteUser(userId);
+        // Mock service to throw exception directly
+        when(userService.softDeleteUser(userId))
+                .thenThrow(new RuntimeException("Database error"));
 
-        // Assert
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        verify(userService, times(1)).softDeleteUser(userId);
+        // Act & Assert
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            userControllerV1.deleteUser(userId);
+        });
+
+        assertEquals("Database error", exception.getMessage());
+
+        // Optional: Verify service interaction
+        verify(userService).softDeleteUser(userId);
     }
 }
